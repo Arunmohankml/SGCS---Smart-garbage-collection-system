@@ -13,6 +13,8 @@ import {
   Check,
   AlertCircle,
   ExternalLink,
+  Trash2,
+  UploadCloud,
 } from "lucide-react";
 import { StatusBadge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -29,10 +31,13 @@ const nextStatus: Record<IssueStatus, IssueStatus | null> = {
 };
 
 export function MunicipalityDashboard() {
-  const { issues, updateStatus } = useIssuesStore();
+  const { issues, updateStatus, deleteIssue } = useIssuesStore();
   const { user } = useAuth();
   const [department, setDepartment] = useState<string>("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  
+  // Local state to keep track of uploaded resolution proof images (issue.id -> base64)
+  const [proofImages, setProofImages] = useState<Record<string, string>>({});
 
   const visible =
     department === "all"
@@ -51,6 +56,14 @@ export function MunicipalityDashboard() {
       updateStatus(issue.id, next);
       setUpdatingId(null);
     }, 400);
+  };
+
+  const handleProofImageChange = (issueId: string, file: File) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProofImages((prev) => ({ ...prev, [issueId]: reader.result as string }));
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -157,6 +170,7 @@ export function MunicipalityDashboard() {
           visible.map((issue) => {
             const next = nextStatus[issue.status];
             const mainImage = issue.images?.[0]?.url;
+            const resolutionImage = issue.images?.find((img) => img.kind === "resolution")?.url;
 
             // Sanitize title to remove duplicate words like "Issue Issue"
             const cleanTitle = issue.title
@@ -170,12 +184,29 @@ export function MunicipalityDashboard() {
               >
                 <div className="flex gap-4 items-center min-w-0 flex-1">
                   {mainImage ? (
-                    <img
-                      src={mainImage}
-                      alt={cleanTitle}
-                      className="h-20 w-28 shrink-0 rounded-2xl object-cover border border-slate-150 shadow-2xs"
-                      loading="lazy"
-                    />
+                    <div className="relative shrink-0 flex gap-2">
+                      <div className="flex flex-col items-center">
+                        <img
+                          src={mainImage}
+                          alt={cleanTitle}
+                          className="h-20 w-28 rounded-2xl object-cover border border-slate-150 shadow-2xs"
+                          loading="lazy"
+                        />
+                        <span className="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-wider">Before</span>
+                      </div>
+                      
+                      {resolutionImage && (
+                        <div className="flex flex-col items-center">
+                          <img
+                            src={resolutionImage}
+                            alt="Resolution proof"
+                            className="h-20 w-28 rounded-2xl object-cover border border-emerald-150 shadow-2xs"
+                            loading="lazy"
+                          />
+                          <span className="text-[9px] font-bold text-emerald-600 mt-1 uppercase tracking-wider">Fixed</span>
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <div className="h-20 w-28 shrink-0 rounded-2xl bg-slate-100 border border-slate-200 flex flex-col items-center justify-center gap-1 text-slate-400">
                       <ImageIcon className="h-5 w-5 text-slate-400" />
@@ -183,7 +214,7 @@ export function MunicipalityDashboard() {
                     </div>
                   )}
 
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-0 flex-1 ml-2">
                     <div className="flex flex-wrap items-center gap-2">
                       <StatusBadge status={issue.status} />
                       <span className="font-mono text-xs text-slate-400 font-semibold">
@@ -214,37 +245,98 @@ export function MunicipalityDashboard() {
                     href={`https://www.google.com/maps?q=${issue.location?.lat || 13.0827},${issue.location?.lng || 80.2707}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs h-11"
                   >
                     <ExternalLink className="h-3.5 w-3.5 text-blue-600" />
                     Show in Map
                   </a>
 
                   {next ? (
-                    <button
-                      onClick={() => advance(issue)}
-                      disabled={updatingId === issue.id}
-                      className={cn(
-                        "inline-flex shrink-0 items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold transition-all shadow-xs active:scale-[0.98] border h-11",
-                        next === "resolved"
-                          ? "border-emerald-600 bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-600/20"
-                          : "border-blue-600 bg-blue-600 text-white hover:bg-blue-700 shadow-blue-600/20"
-                      )}
-                    >
-                      {updatingId === issue.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : next === "resolved" ? (
-                        <Check className="h-4 w-4 stroke-[3]" />
+                    next === "resolved" ? (
+                      proofImages[issue.id] ? (
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={proofImages[issue.id]}
+                            alt="Resolution Proof Thumbnail"
+                            className="h-11 w-11 rounded-xl object-cover border border-slate-200"
+                          />
+                          <button
+                            onClick={() => {
+                              setUpdatingId(issue.id);
+                              setTimeout(() => {
+                                updateStatus(issue.id, "resolved", proofImages[issue.id]);
+                                setUpdatingId(null);
+                                setProofImages((prev) => {
+                                  const copy = { ...prev };
+                                  delete copy[issue.id];
+                                  return copy;
+                                });
+                              }, 450);
+                            }}
+                            disabled={updatingId === issue.id}
+                            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all shadow-xs active:scale-[0.98] border border-emerald-600 bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-600/20 h-11"
+                          >
+                            {updatingId === issue.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Check className="h-4 w-4 stroke-[3]" />
+                            )}
+                            Confirm & Resolve
+                          </button>
+                        </div>
                       ) : (
-                        <TrendingUp className="h-4 w-4" />
-                      )}
-                      {next === "resolved" ? "Mark Fixed & Resolved" : "Start Repair Work"}
-                    </button>
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            id={`proof-upload-${issue.id}`}
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) handleProofImageChange(issue.id, file);
+                            }}
+                          />
+                          <label
+                            htmlFor={`proof-upload-${issue.id}`}
+                            className="cursor-pointer inline-flex items-center gap-2 rounded-xl border border-amber-250 bg-amber-50 px-4 py-2.5 text-xs font-bold text-amber-800 hover:bg-amber-100 transition-colors shadow-2xs h-11"
+                          >
+                            <UploadCloud className="h-4 w-4 text-amber-600" />
+                            Upload Fixed Image
+                          </label>
+                        </div>
+                      )
+                    ) : (
+                      <button
+                        onClick={() => advance(issue)}
+                        disabled={updatingId === issue.id}
+                        className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold transition-all shadow-xs active:scale-[0.98] border border-blue-600 bg-blue-600 text-white hover:bg-blue-700 shadow-blue-600/20 h-11"
+                      >
+                        {updatingId === issue.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <TrendingUp className="h-4 w-4" />
+                        )}
+                        Start Repair Work
+                      </button>
+                    )
                   ) : (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-200">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-4 py-2.5 rounded-xl border border-emerald-200 h-11">
                       <Check className="h-4 w-4 stroke-[3]" /> Case Closed
                     </span>
                   )}
+
+                  {/* Delete Report Button for Municipal Authority Members */}
+                  <button
+                    onClick={() => {
+                      if (confirm("Are you sure you want to delete this complaint report?")) {
+                        deleteIssue(issue.id);
+                      }
+                    }}
+                    className="inline-flex items-center justify-center p-2.5 rounded-xl border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 transition-colors h-11 shadow-2xs"
+                    title="Delete Report"
+                  >
+                    <Trash2 className="h-4.5 w-4.5" />
+                  </button>
                 </div>
               </div>
             );
