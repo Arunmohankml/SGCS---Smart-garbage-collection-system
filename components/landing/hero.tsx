@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Plus, Search, ShieldCheck } from "lucide-react";
+import { ArrowRight, Plus, Search, ShieldCheck, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Hero() {
@@ -22,19 +22,19 @@ export function Hero() {
         {/* Sub-badge */}
         <div className="inline-flex items-center gap-2 rounded-full border border-blue-200/40 bg-white/70 px-4 py-2 text-xs font-bold text-blue-900 shadow-2xs backdrop-blur-md mb-12">
           <ShieldCheck className="h-4 w-4 text-blue-600 animate-pulse" />
-          <span>Official Municipal Public Governance & Dispatch Platform</span>
+          <span>Smart Government & Citizen Waste Collection System</span>
         </div>
 
         {/* Clean, Elegant Semibold Heading - Larger Font Size */}
         <h1 className="text-slate-900 font-semibold tracking-tight text-4xl sm:text-6xl lg:text-7xl max-w-4xl mx-auto leading-[1.12] font-sans">
-          From Citizen Photo
+          Smart Doorstep &
           <br />
-          to Swift Street Repair.
+          Community Waste Collection.
         </h1>
 
         {/* Clean, Readable, Minimal Description - Larger Font Size and spacing */}
         <p className="mt-10 text-slate-650 font-medium text-base sm:text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed">
-          CivicEye bridges citizens directly with city municipal dispatchers. Report dangerous potholes, water leaks, or broken streetlights to automatically launch a verified, real-time repair campaign.
+          CivicEye connects citizens directly with city sanitation departments. Request doorstep or neighborhood garbage collection from your home, and municipal admins dispatch collection vehicles in real-time.
         </p>
 
         {/* Primary Action Buttons - Larger spacing */}
@@ -45,7 +45,7 @@ export function Hero() {
               variant="primary"
               className="flex items-center gap-2 text-sm font-bold px-8 py-4 h-13 rounded-full bg-blue-600/80 hover:bg-blue-600 border border-blue-500/30 text-white shadow-md shadow-blue-600/20 uppercase tracking-wider backdrop-blur-md"
             >
-              <Plus className="h-4 w-4 stroke-[2.5]" /> File Complaint Report <ArrowRight className="h-4 w-4" />
+              <Plus className="h-4 w-4 stroke-[2.5]" /> Request Garbage Pickup <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
 
@@ -55,7 +55,7 @@ export function Hero() {
               variant="outline"
               className="flex items-center gap-2 text-sm font-bold px-8 py-4 h-13 rounded-full border border-slate-200 text-slate-800 bg-white/60 hover:bg-white/85 shadow-xs uppercase tracking-wider backdrop-blur-md"
             >
-              <Search className="h-4 w-4 text-blue-600" /> Browse Public Feed
+              <Truck className="h-4 w-4 text-blue-600" /> Track Collection Queue
             </Button>
           </Link>
         </div>

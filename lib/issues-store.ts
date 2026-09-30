@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { type Issue, type IssueCategory, type IssueStatus, type IssueImage } from "@/lib/types";
 
-const CUSTOM_ISSUES_KEY = "civiceye_custom_issues_v2";
-const STORE_CHANGE_EVENT = "civiceye_issues_store_changed";
-const DELETED_ISSUES_KEY = "civiceye_deleted_issues_v2";
+const CUSTOM_ISSUES_KEY = "civiceye_garbage_requests_v3";
+const STORE_CHANGE_EVENT = "civiceye_garbage_store_changed";
+const DELETED_ISSUES_KEY = "civiceye_deleted_garbage_v3";
 
 function getStoredCustomIssues(): Issue[] {
   if (typeof window === "undefined") return [];
@@ -23,7 +23,7 @@ function saveCustomIssues(issues: Issue[]): void {
     localStorage.setItem(CUSTOM_ISSUES_KEY, JSON.stringify(issues));
     window.dispatchEvent(new Event(STORE_CHANGE_EVENT));
   } catch (e) {
-    console.error("Failed to save issues to localStorage", e);
+    console.error("Failed to save garbage collection requests to localStorage", e);
   }
 }
 
@@ -76,12 +76,13 @@ export function useIssuesStore() {
     ...apiIssues.filter((a) => !customIssues.some((c) => c.id === a.id))
   ].filter((i) => !deletedIds.includes(i.id));
 
-  const addIssue = (newIssue: Omit<Issue, "id" | "reference" | "createdAt" | "updatedAt" | "votes" | "verification" | "comments"> & { id?: string }) => {
+  const addIssue = (newIssue: Omit<Issue, "id" | "reference" | "createdAt" | "updatedAt" | "votes" | "verification" | "comments" | "status"> & { id?: string; status?: IssueStatus }) => {
     const id = newIssue.id || String(Date.now());
     const fullIssue: Issue = {
       ...newIssue,
       id,
-      reference: `CE-26-${id.slice(-4)}`,
+      reference: `CE-WASTE-${id.slice(-4)}`,
+      municipality: newIssue.municipality || "Central Ward",
       status: newIssue.status || "open",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -95,7 +96,7 @@ export function useIssuesStore() {
     return fullIssue;
   };
 
-  const updateStatus = (id: string, status: IssueStatus, resolutionImageUrl?: string) => {
+  const updateStatus = (id: string, status: IssueStatus, resolutionImageUrl?: string, assignedCrew?: string) => {
     const resolveImage: IssueImage | null = resolutionImageUrl ? {
       url: resolutionImageUrl,
       capturedAt: new Date().toISOString(),
@@ -108,6 +109,7 @@ export function useIssuesStore() {
         ...i,
         status,
         images: updatedImages,
+        assignedCrew: assignedCrew || i.assignedCrew,
         updatedAt: new Date().toISOString(),
         ...(status === "resolved" ? { resolvedAt: new Date().toISOString() } : {})
       };
@@ -127,6 +129,10 @@ export function useIssuesStore() {
         saveCustomIssues(updated);
       }
     }
+  };
+
+  const dispatchCrew = (id: string, crewName: string) => {
+    updateStatus(id, "in_progress", undefined, crewName);
   };
 
   const deleteIssue = (id: string) => {
@@ -166,6 +172,7 @@ export function useIssuesStore() {
     issues: allIssues,
     addIssue,
     updateStatus,
+    dispatchCrew,
     deleteIssue,
     upvoteIssue,
     loading,

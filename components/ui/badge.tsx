@@ -24,6 +24,7 @@ const statusStyles: Record<IssueStatus, string> = {
   open: "bg-amber-100 text-amber-900 border-amber-300 font-bold",
   in_progress: "bg-blue-100 text-blue-900 border-blue-300 font-bold",
   resolved: "bg-emerald-100 text-emerald-900 border-emerald-300 font-bold",
+  cancelled: "bg-slate-100 text-slate-600 border-slate-300 font-normal line-through",
   reopened: "bg-red-100 text-red-900 border-red-300 font-bold",
   rejected: "bg-slate-100 text-slate-600 border-slate-300 font-normal line-through",
 };
@@ -34,7 +35,7 @@ export function StatusBadge({ status }: { status: IssueStatus }) {
     <span
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold shadow-xs",
-        statusStyles[status]
+        statusStyles[status] || statusStyles.open
       )}
     >
       <span
@@ -47,7 +48,7 @@ export function StatusBadge({ status }: { status: IssueStatus }) {
             : "bg-amber-600"
         )}
       />
-      {STATUS_LABELS[status]}
+      {STATUS_LABELS[status] || status}
     </span>
   );
 }

@@ -10,8 +10,8 @@ import { useAuth } from "@/lib/auth";
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
-  { href: "/issues", label: "Public Feed", icon: Megaphone },
-  { href: "/municipality", label: "City Desk", icon: Building2 },
+  { href: "/issues", label: "Pickup Tracker", icon: Megaphone },
+  { href: "/municipality", label: "Ward Admin Desk", icon: Building2 },
   { href: "/#faq", label: "FAQ", icon: HelpCircle },
 ];
 
@@ -118,7 +118,7 @@ export function Header() {
                 {/* Report Action Button */}
                 <Link href="/report">
                   <button className="h-10 px-5 text-xs font-bold uppercase tracking-wider rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-all flex items-center gap-1.5 shadow-md shadow-blue-600/20">
-                    <Plus className="h-4 w-4 stroke-[2.5]" /> Report Issue
+                    <Plus className="h-4 w-4 stroke-[2.5]" /> Schedule Pickup
                   </button>
                 </Link>
               </div>
@@ -138,7 +138,7 @@ export function Header() {
                 </Link>
                 <Link href="/report">
                   <button className="h-10 px-5 text-xs font-bold uppercase tracking-wider rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-all flex items-center gap-1.5 shadow-md shadow-blue-600/20">
-                    <Plus className="h-4 w-4 stroke-[2.5]" /> Report Issue
+                    <Plus className="h-4 w-4 stroke-[2.5]" /> Schedule Pickup
                   </button>
                 </Link>
               </div>

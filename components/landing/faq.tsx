@@ -6,24 +6,24 @@ import { useState } from "react";
 
 const faqs = [
   {
-    q: "What is CivicEye?",
-    a: "CivicEye is an easy public portal for citizens to report potholes, water leaks, broken streetlights, or garbage problems. Reports are sent directly to your local city municipality to fix.",
+    q: "What is CivicEye Smart Garbage Collection?",
+    a: "CivicEye is a dedicated public portal connecting citizens directly with municipal sanitation departments. When you have garbage at home or in your community, you can request a pickup online, and government admins dispatch crews to collect it.",
   },
   {
-    q: "Is CivicEye free to use?",
-    a: "Yes! CivicEye is completely free for all citizens and senior community members.",
+    q: "How do I request a waste pickup from my home?",
+    a: "Just click 'Request Garbage Pickup', select your municipal ward, pick your waste category (wet, recyclables, e-waste, bulky, etc.), enter your address and preferred pickup window, and submit! It takes less than 1 minute.",
   },
   {
-    q: "How do I report a problem?",
-    a: "Just click '+ Report a Problem' at the top, take or upload a photo, tap 'Detect Location', and click submit. It takes under 1 minute!",
+    q: "How do government admins dispatch collection crews?",
+    a: "Municipal administrators log into the dispatch console, view incoming requests in a categorized manner (by ward, waste type, and urgency), assign a collection vehicle/crew, and send people to collect the waste.",
   },
   {
-    q: "Can I check if my reported problem has been fixed?",
-    a: "Yes. Every report appears on the live public feed. You can check its status (Open, In Progress, or Resolved) anytime.",
+    q: "What types of waste can be collected?",
+    a: "We support household wet/kitchen waste, dry recyclables (paper, plastic, cardboard, glass), electronic e-waste & appliances, bulky furniture/mattresses, hazardous/sanitary waste, and garden green clippings.",
   },
   {
-    q: "Who fixes the complaints?",
-    a: "Local municipal departments (such as Road Works, Water Sanitation, and Electrical Services) receive your complaint and dispatch field crews to repair it.",
+    q: "How do I know when the garbage has been collected?",
+    a: "The municipality crew must photograph the cleared doorstep upon collection. You can see the 'Collected & Cleared' status and the verified photo proof live in the public pickup tracker.",
   },
 ];
 
@@ -32,13 +32,16 @@ export function Faq() {
 
   return (
     <section id="faq" className="py-24 border-b border-slate-200 bg-white">
-      <div className="mx-auto max-w-3xl px-6">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6">
         <Reveal>
-          <h2 className="awwwards-h2 text-slate-900 font-bold text-center mb-4">
-            Have Questions? We Have Answers.
+          <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1 text-xs font-bold text-blue-900 uppercase tracking-wider mb-3">
+            Common Questions
+          </div>
+          <h2 className="awwwards-h2 text-slate-900 font-bold text-3xl sm:text-4xl">
+            Frequently Asked Questions
           </h2>
-          <p className="mt-3 text-slate-600 font-medium awwwards-body text-base text-center max-w-md mx-auto">
-            Everything you need to know about reporting, tracking, and municipal resolutions.
+          <p className="mt-3 text-slate-600 font-medium awwwards-body text-base max-w-md">
+            Everything you need to know about doorstep waste collection, municipal dispatching, and tracking.
           </p>
         </Reveal>
 
@@ -52,7 +55,7 @@ export function Faq() {
                 >
                   <span>{f.q}</span>
                   <ChevronDown
-                    className={`h-5 w-5 text-blue-600 transition-transform duration-200 ${
+                    className={`h-5 w-5 text-blue-600 transition-transform duration-200 shrink-0 ml-4 ${
                       open === f.q ? "rotate-180" : ""
                     }`}
                   />
