@@ -1,441 +1,302 @@
-# CivicEye
+# SGCS — Smart Garbage Collection System
 
-**See It. Report It. Fix It.**
+[![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![Sanitation](https://img.shields.io/badge/Domain-Smart_Sanitation_&_Waste_Logistics-emerald?style=for-the-badge)](https://github.com/Arunmohankml/SGCS---Smart-garbage-collection-system)
 
-An intelligent, transparent civic-complaint platform that bridges citizens and municipal authorities. Citizens photograph and report public issues in seconds; municipalities manage, prioritize, and resolve them through a live dispatch console. AI assists at every stage and the community verifies each resolution.
-
----
-
-## Table of Contents
-
-1. [Project Overview](#project-overview)
-2. [Tech Stack](#tech-stack)
-3. [Features](#features)
-4. [Architecture](#architecture)
-5. [Getting Started](#getting-started)
-6. [Environment Variables](#environment-variables)
-7. [Database Schema](#database-schema)
-8. [API Routes](#api-routes)
-9. [Component Library](#component-library)
-10. [User Flows](#user-flows)
-11. [Deployment](#deployment)
+> **On-Demand Doorstep Waste Collection & Municipal Fleet Dispatch Platform**  
+> Connecting citizens directly with local municipal sanitation authorities across Tamil Nadu for categorized waste collection, automated fleet routing, and verified doorstep cleanup proofs.
 
 ---
 
-## Project Overview
+## 📌 Table of Contents
 
-CivicEye is a full-stack civic-tech application built with Next.js 15. It enables:
-
-- **Citizens** to photograph public infrastructure issues, auto-tag GPS location, and submit complaints in under a minute
-- **Municipal authorities** to view, filter, prioritize, and advance complaints through a dashboard
-- **Community** to upvote issues and verify whether reported fixes are real
-- **AI** to auto-categorize issues, detect spam, and compute priority scores
-
-The platform uses a transparent public feed where every report is visible to everyone, creating accountability.
-
----
-
-## Tech Stack
-
-| Layer | Technology | Purpose |
-|---|---|---|
-| **Framework** | Next.js 15 (App Router) | Server-side rendering, API routes, file-based routing |
-| **Language** | TypeScript | Type safety across the entire codebase |
-| **Styling** | Tailwind CSS 3.4 | Utility-first CSS with custom design tokens |
-| **UI Components** | Custom + Lucide React | Reusable primitives (Button, Badge, Logo) |
-| **State Management** | React Context + Custom Hooks | Auth state, issues store with localStorage sync |
-| **Database** | Supabase (PostgreSQL) | Primary data store for issues, profiles, votes |
-| **Auth** | Firebase Authentication | Google Sign-In for citizens; mock auth for authorities |
-| **Image Storage** | Cloudinary | Image upload, transformation, and CDN delivery |
-| **Push Notifications** | Firebase Cloud Messaging | Notify citizens of status changes |
-| **Maps** | Google Maps / Mapbox | Location picker and issue map view |
-| **AI** | Placeholder (ready for OpenAI/Google Vision) | Image classification, spam detection, priority scoring |
-| **Deployment** | Vercel | Serverless hosting with edge functions |
+1. [Project Overview](#-project-overview)
+2. [Key Capabilities](#-key-capabilities)
+   - [For Citizens](#for-citizens)
+   - [For Municipal Authorities (Ward Admin Desk)](#for-municipal-authorities-ward-admin-desk)
+3. [Supported Municipalities](#-supported-municipalities-tamil-nadu)
+4. [Waste Segregation Categories](#-waste-segregation-categories)
+5. [System Workflow & Architecture](#-system-workflow--architecture)
+6. [Tech Stack](#-tech-stack)
+7. [Project Structure](#-project-structure)
+8. [Getting Started](#-getting-started)
+   - [Prerequisites](#prerequisites)
+   - [Installation](#installation)
+   - [Running Locally](#running-locally)
+   - [Production Build](#production-build)
+9. [API Reference](#-api-reference)
+10. [Session & Cache Storage](#-session--cache-storage)
 
 ---
 
-## Features
+## 🌟 Project Overview
+
+Traditional municipal waste collection often suffers from rigid truck schedules, overflow in residential dumpsters, and lack of accountability. **SGCS (Smart Garbage Collection System)** modernizes this entire pipeline:
+
+- **Citizens** request doorstep garbage or recyclable collection through the web in under 60 seconds whenever their bins are full.
+- **Municipal Authorities** review requests in a categorized dispatch console (by ward, waste category, and urgency) and send specific sanitation vehicles/crews directly to the citizen's doorstep.
+- **Privacy & Direct Tracking**: No cluttered public complaint boards. Citizens track their own requests in **"My Reports"**, complete with assigned vehicle details and timestamped photo verification upon collection.
+
+---
+
+## 🚀 Key Capabilities
 
 ### For Citizens
-- One-tap photo reporting with camera capture or gallery upload
-- Auto GPS detection with manual fallback
-- Category selection (pothole, garbage, water leakage, streetlight, drainage, road damage, other)
-- Optional landmark and remarks fields
-- Public feed with real-time filtering and search
-- Upvote issues to increase priority
-- Issue detail view with image gallery
-- Community verification voting (fixed / still exists)
+- **Doorstep Pickup Request**: Select waste category, quantity estimate (Small, Medium, Truckload), preferred collection window (Morning, Afternoon, Urgent), address, and landmark.
+- **AI Waste Classification**: Upload or capture a photo of the waste; an integrated detection model classifies the waste category and computes urgency priority scores.
+- **Browser-Cached Citizen Login**: Instant sign-in via Name, Mobile Number, and Municipality Ward. Sessions persist seamlessly across page reloads in browser storage.
+- **Personal "My Reports" Tracker**: Dedicated dashboard showing only the citizen's personal pickup requests with live status:
+  - `Pending Pickup`
+  - `Crew En Route / Dispatched` (displays assigned sanitation truck & crew name)
+  - `Doorstep Collected` (displays verified resolution cleanup photo proof)
+- **Direct Search & Filters**: Filter personal requests by waste category, collection status, or search by tracking code (`SGCS-XXXX`).
 
-### For Municipalities
-- Live department dashboard with KPI cards (open, in-progress, resolved)
-- Department-wise filtering
-- One-click status advancement (open → in progress → resolved)
-- Thumbnail previews for each issue
-- Live sync indicator
-
-### For Everyone
-- Transparent public feed with all reports
-- AI priority scoring visible on every card
-- Status badges with color coding
-- Reference codes for tracking
-- Responsive design (mobile + desktop)
-
----
-
-## Architecture
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                     Next.js 15 App                       │
-├─────────────────────────────────────────────────────────┤
-│  App Router (pages + API routes)                        │
-├─────────────────────────────────────────────────────────┤
-│  Components Layer                                        │
-│  ├── landing/ (13 marketing sections)                   │
-│  ├── report/ (citizen reporting form)                   │
-│  ├── issues/ (public feed + detail + voting)            │
-│  ├── municipality/ (authority dashboard)                │
-│  ├── auth/ (Firebase Google sign-in)                    │
-│  └── ui/ (Button, Badge, Logo primitives)               │
-├─────────────────────────────────────────────────────────┤
-│  lib/ (business logic + clients)                        │
-│  ├── auth.tsx (React Context: AuthProvider)             │
-│  ├── issues-store.ts (custom hook + localStorage sync)  │
-│  ├── supabase/ (browser + server clients)               │
-│  ├── firebase/ (client + admin SDK)                     │
-│  ├── mock.ts (static demo data)                         │
-│  └── types.ts (domain types)                            │
-├─────────────────────────────────────────────────────────┤
-│  External Services                                       │
-│  ├── Supabase (PostgreSQL + Auth)                       │
-│  ├── Firebase (Auth + FCM)                              │
-│  ├── Cloudinary (Image CDN)                             │
-│  └── Google Maps / Mapbox (Location)                    │
-└─────────────────────────────────────────────────────────┘
-```
+### For Municipal Authorities (Ward Admin Desk)
+- **Municipal Authority Login**: Role-based authentication covering all 14 designated municipality jurisdictions.
+- **Real-Time KPI Cards**: Monitor Total Requests, Pending Pickups, Dispatched Crews, and Cleared Pickups at a glance.
+- **Clean Expandable Dropdown Filters**:
+  - Filter by **Municipality Ward** (with real-time count badges)
+  - Filter by **Waste Category**
+  - Filter by **Collection Status**
+  - Global Search across addresses, tracking codes, phone numbers, and crew names.
+- **Crew & Vehicle Dispatch**: Assign specialized sanitation vehicles:
+  - *Sanitation Truck #01 - Morning Shift*
+  - *Eco-Recycle Van #03 - Dry Waste Team*
+  - *Heavy Haulage Truck #08 - Bulky Unit*
+  - *Green Squad #04 - Organic Logistics*
+  - *Bio-Hazard Van #02 - Specialized Handling*
+- **Resolution Proof Upload**: Sanitation crew takes a photo of the cleared doorstep to close the ticket and provide photographic verification to the citizen.
 
 ---
 
-## Getting Started
+## 🏛 Supported Municipalities (Tamil Nadu)
+
+SGCS is pre-configured with 14 municipal administrative jurisdictions:
+
+| # | Municipality | Region |
+|---|---|---|
+| 1 | **Poonamallee** | Chennai West Suburbs |
+| 2 | **Thiruverkadu** | Chennai West Suburbs |
+| 3 | **Thiruninravur** | Tiruvallur District |
+| 4 | **Kundrathur** | Kanchipuram District |
+| 5 | **Mangadu** | Chennai West Suburbs |
+| 6 | **Sriperumbudur** | Kanchipuram District Industrial Belt |
+| 7 | **Walajabad** | Kanchipuram District |
+| 8 | **Tirukalukundram** | Chengalpattu District |
+| 9 | **Nandivaram-Guduvancheri** | Chengalpattu District |
+| 10 | **Maraimalai Nagar** | Chengalpattu District |
+| 11 | **Chengalpattu** | Chengalpattu District Headquarters |
+| 12 | **Ponneri** | Tiruvallur District |
+| 13 | **Tiruttani** | Tiruvallur District |
+| 14 | **Arakkonam** | Ranipet District |
+
+---
+
+## ♻ Waste Segregation Categories
+
+To ensure scientific recycling and disposal, requests are categorized into 6 streams:
+
+1. **Kitchen & Wet Waste**: Food scraps, vegetable peels, banquet waste, biodegradable materials.
+2. **Dry Recyclables**: Cardboard boxes, paper packaging, plastics, glass bottles, metal cans.
+3. **E-Waste & Electronics**: Old electronic appliances, lithium-ion batteries, wires, circuit boards.
+4. **Bulky & Furniture Debris**: Old mattresses, wooden furniture, renovation waste, bulky debris.
+5. **Hazardous & Sanitary**: Expired chemicals, paint containers, medical or sanitary waste.
+6. **Garden & Green Waste**: Pruned branches, dry leaves, grass clippings, landscaping waste.
+
+---
+
+## 🔄 System Workflow & Architecture
+
+```mermaid
+flowchart TD
+    subgraph Citizen["Citizen (User)"]
+        A["Citizen Signs In / Guest"] --> B["Request Doorstep Pickup"]
+        B --> C["Upload Photo + Select Ward & Waste Category"]
+        C --> D["Submit Request (Ref: SGCS-XXXX)"]
+        D --> E["Stored in Browser Cache & Backend"]
+        E --> F["Track in 'My Reports'"]
+    end
+
+    subgraph Admin["Government Administration (Ward Admin Desk)"]
+        G["Municipal Officer Signs In"] --> H["Ward Admin Console (/municipality/dashboard)"]
+        H --> I["Categorized Queue (Wards / Categories / Status)"]
+        I --> J["Dispatch Sanitation Crew & Vehicle"]
+        J --> K["Crew Arrives at Doorstep & Clears Waste"]
+        K --> L["Upload Verification Photo Proof"]
+        L --> M["Status Updated: Doorstep Collected"]
+    end
+
+    J -.->|Real-Time Status: Crew En Route| F
+    M -.->|Real-Time Status: Verified Photo Proof| F
+```
+
+---
+
+## 💻 Tech Stack
+
+| Layer | Technology | Details |
+|---|---|---|
+| **Framework** | **Next.js 15.5** (App Router) | Server-side rendering, client components, API routes |
+| **Language** | **TypeScript 5.0** | End-to-end type safety |
+| **Styling** | **Tailwind CSS 3.4** | Modern responsive styling, custom design system |
+| **Icons** | **Lucide React** | Consistent iconography throughout UI |
+| **State & Cache** | **React Hooks + LocalStorage** | Synchronized multi-tab storage with custom event dispatching |
+| **AI Detection** | **YOLO / Edge API** (`/api/detect`) | Waste segregation confidence & priority scoring |
+| **Database** | **Supabase / PostgreSQL** | Cloud persistence with local offline fallback |
+| **Fonts** | **DM Sans & Geist Mono** | Google fonts via `next/font` |
+
+---
+
+## 📂 Project Structure
+
+```
+CivicEye/
+├── app/
+│   ├── api/
+│   │   ├── auth/           # Session management & logout
+│   │   ├── detect/         # AI waste detection & priority score
+│   │   ├── issues/         # Pickup request CRUD endpoints
+│   │   └── upload/         # Media upload handling
+│   ├── issues/             # Redirects to /my-reports
+│   │   └── [id]/           # Individual ticket detail view
+│   ├── login/              # Citizen login page
+│   ├── municipality/       # Municipal authority login & desk
+│   │   └── dashboard/      # Ward Admin Console (Categorized dispatch)
+│   ├── my-reports/         # Personal citizen report tracker (no public feed)
+│   ├── report/             # Doorstep waste pickup request form
+│   ├── globals.css         # Global Tailwind styles & light theme tokens
+│   ├── layout.tsx          # Root layout with DM Sans & light theme
+│   └── page.tsx            # Modern homepage with hero & feature sections
+├── components/
+│   ├── auth/
+│   │   ├── citizen-login.tsx       # Citizen auth with name, phone, ward
+│   │   └── municipality-login.tsx  # Authority jurisdiction login
+│   ├── issues/
+│   │   ├── issue-card.tsx          # Ticket card with status & photo proof
+│   │   ├── issue-detail.tsx        # Detailed ticket view
+│   │   ├── issue-drawer.tsx        # Slide-over quick preview drawer
+│   │   └── my-reports-view.tsx     # Citizen-only personal queue
+│   ├── landing/
+│   │   ├── header.tsx              # High-contrast navbar (Home, My Reports, Admin)
+│   │   ├── hero.tsx                # Hero section with direct CTAs
+│   │   ├── how-it-works.tsx        # 4-step doorstep pickup workflow
+│   │   ├── ai-features.tsx         # AI segregation & classification
+│   │   ├── municipality.tsx        # Admin dispatch overview
+│   │   ├── faq.tsx                 # Frequently asked questions
+│   │   ├── cta.tsx                 # Bottom call-to-action
+│   │   └── footer.tsx              # Clean footer navigation
+│   ├── municipality/
+│   │   └── dashboard.tsx           # Full Ward Admin Console with dropdown filters
+│   ├── report/
+│   │   └── report-form.tsx         # Doorstep collection booking form
+│   └── ui/
+│       ├── badge.tsx               # Status badges (Pending, Dispatched, Collected)
+│       ├── button.tsx              # Reusable button primitive
+│       └── logo.tsx                # SGCS brand logo component
+├── lib/
+│   ├── auth.ts                     # User session management (citizen & authority)
+│   ├── issues-store.ts             # Reactive store with localStorage sync
+│   ├── mock.ts                     # Mock interface (clean zero-data queue)
+│   ├── types.ts                    # TypeScript types & 14 municipality definitions
+│   └── utils.ts                    # Class merging and utility helpers
+├── tailwind.config.ts
+└── tsconfig.json
+```
+
+---
+
+## 🛠 Getting Started
 
 ### Prerequisites
-- Node.js 18+
-- npm or yarn
-- Supabase account (free tier works)
-- Firebase project (for auth)
-- Cloudinary account (for image uploads)
+- **Node.js**: `v18.18.0` or higher
+- **npm**: `v9.0.0` or higher (or `pnpm` / `yarn`)
 
 ### Installation
 
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Arunmohankml/SGCS---Smart-garbage-collection-system.git
+   cd SGCS---Smart-garbage-collection-system
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+### Running Locally
+
+Start the Next.js development server:
 ```bash
-# Clone the repository
-git clone https://github.com/your-org/civiceye.git
-cd civiceye
-
-# Install dependencies
-npm install
-
-# Copy environment template
-cp .env.example .env.local
-
-# Start development server
 npm run dev
-# → http://localhost:3000
 ```
 
-### Build for Production
+Open your browser and navigate to:
+```
+http://localhost:3000
+```
 
+- **Homepage**: `http://localhost:3000/`
+- **Request Pickup**: `http://localhost:3000/report`
+- **Citizen "My Reports"**: `http://localhost:3000/my-reports`
+- **Citizen Login**: `http://localhost:3000/login`
+- **Ward Admin Desk**: `http://localhost:3000/municipality`
+- **Admin Console**: `http://localhost:3000/municipality/dashboard`
+
+### Production Build
+
+To verify type safety and produce an optimized production bundle:
 ```bash
+npx tsc --noEmit
 npm run build
-npm start
+npm run start
 ```
 
 ---
 
-## Environment Variables
+## 📡 API Reference
 
-### Required Variables
-
-| Variable | Service | Description |
-|---|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase | Project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase | Public anonymous key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase | Server-only service role key |
-| `CLOUDINARY_CLOUD_NAME` | Cloudinary | Cloud name (e.g. `dtqeqyym4`) |
-| `CLOUDINARY_API_KEY` | Cloudinary | API key |
-| `CLOUDINARY_API_SECRET` | Cloudinary | API secret (server-only) |
-| `NEXT_PUBLIC_FIREBASE_API_KEY` | Firebase | Web API key |
-| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Firebase | Auth domain |
-| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Firebase | Project ID |
-| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | Firebase | Storage bucket |
-| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Firebase | Messaging sender ID |
-| `NEXT_PUBLIC_FIREBASE_APP_ID` | Firebase | App ID |
-| `FIREBASE_SERVICE_ACCOUNT` | Firebase Admin | JSON service account (single-line) |
-
-### Optional Variables
-
-| Variable | Service | Description |
-|---|---|---|
-| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` | Cloudinary | Public cloud name (for client-side) |
-| `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` | Cloudinary | Unsigned upload preset |
-| `NEXT_PUBLIC_MAPS_PROVIDER` | Maps | `google` or `mapbox` |
-| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Google Maps | Maps API key |
-| `NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN` | Mapbox | Mapbox access token |
-| `NEXT_PUBLIC_APP_URL` | App | Canonical URL (default: `http://localhost:3000`) |
-
----
-
-## Database Schema
-
-### Tables
-
-#### `public.profiles`
-```sql
-create table public.profiles (
-  id          text primary key,                    -- Firebase Auth UID
-  email       text not null,
-  name        text,
-  avatar_url  text,
-  role        text not null default 'citizen' check (role in ('citizen', 'authority')),
-  fcm_token   text,
-  created_at  timestamptz not null default now()
-);
-```
-
-#### `public.issues`
-```sql
-create table public.issues (
-  id                    text primary key default gen_random_uuid()::text,
-  reporter_id           text references public.profiles (id),
-  reference             text unique,
-  category              public.issue_category not null,
-  title                 text not null,
-  description           text,
-  status                public.issue_status not null default 'open',
-  location              text,                         -- PostGIS POINT string
-  address               text,
-  landmark              text,
-  images                jsonb not null default '[]',  -- IssueImage[]
-  department            text,
-  ai_category_confidence numeric(4,3) default 0,
-  ai_spam_score          numeric(4,3) default 0,
-  ai_duplicate_of        text references public.issues (id),
-  priority_score         smallint default 0,
-  votes                  integer not null default 0,
-  fixed_votes            integer not null default 0,
-  still_exists_votes     integer not null default 0,
-  created_at             timestamptz not null default now(),
-  updated_at             timestamptz not null default now(),
-  resolved_at            timestamptz
-);
-```
-
-#### `public.resolution_votes`
-```sql
-create table public.resolution_votes (
-  id        text primary key default gen_random_uuid()::text,
-  issue_id  text not null references public.issues (id) on delete cascade,
-  voter_id  text not null references public.profiles (id) on delete cascade,
-  vote      text not null default 'fixed',
-  created_at timestamptz not null default now(),
-  unique (issue_id, voter_id)
-);
-```
-
-### Enums
-
-```sql
-create type public.issue_category as enum (
-  'pothole', 'garbage', 'water_leakage', 'streetlight', 'drainage', 'road_damage', 'other'
-);
-
-create type public.issue_status as enum (
-  'open', 'in_progress', 'resolved', 'reopened', 'rejected'
-);
-```
-
-### Indexes
-```sql
-create index issues_status_idx on public.issues (status);
-create index issues_priority_idx on public.issues (priority_score desc);
-```
-
-### Triggers
-- `set_updated_at` — Auto-updates `updated_at` on row changes
-- `maybe_reopen` — Auto-reopens issue when `still_exists_votes >= 5`
-
-### Row Level Security (RLS)
-- **Issues**: Public read; authenticated insert only (`auth.uid()::text = reporter_id`)
-- **Profiles**: Authenticated access
-- **Resolution Votes**: Authenticated access
-
----
-
-## API Routes
-
-### `GET /api/issues`
-Returns all issues ordered by priority score (descending), limited to 50.
-
-**Response:**
-```json
-{
-  "issues": [ { "id": "...", "category": "pothole", "status": "open", ... } ]
-}
-```
+### `POST /api/detect`
+Analyzes uploaded waste photos for AI segregation classification and priority scoring.
+- **Request**: `multipart/form-data` with `file` and `remarks`.
+- **Response**: `{ category: IssueCategory, confidence: number, priorityScore: number }`
 
 ### `POST /api/issues`
-Creates a new issue. Requires `location.lat`, `location.lng`, and `image`.
+Creates a new doorstep waste collection request.
+- **Body**:
+  ```json
+  {
+    "category": "dry_recyclable",
+    "quantityEstimate": "3-5 Bags (Medium)",
+    "pickupWindow": "Morning (8 AM - 12 PM)",
+    "municipality": "Poonamallee",
+    "address": "Door #14, Trunk Road",
+    "landmark": "Near Bus Terminus",
+    "contactPhone": "98451 22310",
+    "location": { "lat": 13.0487, "lng": 80.0935 },
+    "image": "data:image/jpeg;base64,..."
+  }
+  ```
+- **Response**: `201 Created` with `{ id, reference, status }`
 
-**Request Body:**
-```json
-{
-  "image": "https://res.cloudinary.com/...",
-  "category": "pothole",
-  "landmark": "Near Metro Exit 2",
-  "remarks": "Causing traffic delay",
-  "location": { "lat": 13.0827, "lng": 80.2707 }
-}
-```
-
-**Response:**
-```json
-{
-  "id": "1234567890",
-  "reference": "CE-26-7890",
-  "status": "open",
-  "ai": { "category": "pothole", "priorityScore": 70, ... }
-}
-```
-
-### `PATCH /api/issues/[id]`
-Updates issue status (used by municipality dashboard).
-
-**Request Body:**
-```json
-{ "status": "in_progress" }
-```
-
-### `POST /api/issues/[id]/vote`
-Records a citizen verification vote.
-
-**Request Body:**
-```json
-{ "vote": "fixed" }
-```
-
-### `POST /api/upload`
-Uploads an image to Cloudinary. Accepts `multipart/form-data` with a `file` field.
-
-**Response:**
-```json
-{
-  "url": "https://res.cloudinary.com/.../civiceye/abc123.jpg",
-  "publicId": "civiceye/abc123",
-  "width": 1600,
-  "height": 1200
-}
-```
-
-### `POST /api/auth/session`
-Exchanges a Firebase ID token for a Supabase session.
-
-### `POST /api/auth/logout`
-Destroys the current session.
+### `GET /api/issues`
+Fetches active collection requests for administrative dispatching.
+- **Response**: `{ issues: Issue[] }`
 
 ---
 
-## Component Library
+## 💾 Session & Cache Storage
 
-### UI Primitives (`components/ui/`)
-
-| Component | Props | Description |
-|---|---|---|
-| `Button` | `variant?: "primary" \| "secondary" \| "ghost" \| "danger" \| "outline" \| "accent"`, `size?: "sm" \| "md" \| "lg"` | Action button with multiple variants |
-| `Badge` | `children`, `className` | Generic badge wrapper |
-| `StatusBadge` | `status: IssueStatus` | Colored status indicator with dot |
-| `Logo` | `size?: "sm" \| "md"`, `className` | Brand logo mark with text |
-
-### Landing Sections (`components/landing/`)
-
-| Section | Description |
-|---|---|
-| `Hero` | Main headline + metrics widget + CTA |
-| `Trusted` | Trusted-by logos / social proof |
-| `Problem` | Problem statement with 3 pain-point cards |
-| `HowItWorks` | 12-step citizen-to-resolution flow |
-| `AiFeatures` | AI categorization, spam detection, priority engine |
-| `DashboardPreview` | Live preview of the dashboard with sample data |
-| `Community` | Community stats + verification flow |
-| `Municipality` | Municipal features + CTA |
-| `Stats` | Key metrics bar |
-| `Roadmap` | Phase timeline (Q1-Q4 2026) |
-| `Faq` | Accordion FAQ section |
-| `Cta` | Final call-to-action |
-| `Footer` | Links + copyright |
+The application utilizes high-performance browser caching (`localStorage`) with cross-tab event listeners:
+- `sgcs_user_session`: Stores logged-in citizen profile (name, phone, municipality, role).
+- `sgcs_my_report_ids_v1`: Keeps track of requests created by the user on the device, ensuring their private "My Reports" queue is instantly available even after refreshing.
+- `sgcs_garbage_requests_v1`: Offline-resilient store for newly scheduled doorstep requests.
 
 ---
 
-## User Flows
+## 📄 License
 
-### Citizen Reporting Flow
-```
-1. Open /report
-2. Take/upload photo (uploaded to Cloudinary via /api/upload)
-3. Auto-detect GPS location
-4. Select category, add landmark/remarks
-5. Submit (POST /api/issues → Supabase)
-6. Redirect to /issues (public feed)
-```
-
-### Municipality Dashboard Flow
-```
-1. Sign in at /municipality (mock auth)
-2. View dashboard at /municipality/dashboard
-3. Filter by department
-4. Click "Dispatch Field Crew" or "Mark Fixed & Resolved"
-5. Status updates via PATCH /api/issues/[id]
-```
-
-### Community Verification Flow
-```
-1. Browse public feed at /issues
-2. Click issue card → detail view
-3. If status is "resolved", vote "Fixed" or "Still Exists"
-4. Vote recorded via POST /api/issues/[id]/vote
-5. If 5+ "still_exists" votes, auto-reopen trigger fires
-```
-
----
-
-## Deployment
-
-### Vercel (Recommended)
-
-1. Push to GitHub
-2. Import project in Vercel
-3. Add all environment variables in Vercel dashboard
-4. Deploy
-
-### Manual
-
-```bash
-npm run build
-npm start
-# → http://localhost:3000
-```
-
----
-
-## Notes
-
-- Demo data in `lib/mock.ts` is used for landing page previews
-- The `issues-store` merges localStorage custom issues with API data
-- FCM messaging must only be initialized client-side
-- Cloudinary API secret is never exposed to the browser
-- All Supabase service role operations are server-side only
-
----
-
-## License
-
-MIT
+Developed for modern civic sanitation management under the **MIT License**.
+Distributed to streamline waste management for citizens and municipal corporations across Tamil Nadu.
