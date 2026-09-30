@@ -4,7 +4,7 @@ import { Footer } from "@/components/landing/footer";
 import { ReportForm } from "@/components/report/report-form";
 
 export const metadata: Metadata = {
-  title: "Request Waste Pickup — CivicEye Smart Sanitation",
+  title: "Request Waste Pickup — SGCS Smart Sanitation",
   description:
     "Schedule on-demand doorstep or neighborhood garbage collection with your local municipality.",
 };

@@ -16,21 +16,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CivicEye — See It. Report It. Fix It.",
+  title: "SGCS — Smart Garbage Collection System",
   description:
-    "CivicEye empowers citizens to report public issues instantly while enabling municipalities to manage, prioritize, and resolve complaints through an intelligent, transparent platform.",
+    "SGCS empowers citizens to request on-demand doorstep waste pickup while enabling municipal authorities across Tamil Nadu to manage and dispatch sanitation crews through an intelligent platform.",
   keywords: [
-    "civic tech",
-    "issue reporting",
-    "municipality",
-    "pothole reporting",
-    "citizen complaints",
-    "smart city",
+    "SGCS",
+    "smart garbage collection",
+    "doorstep waste pickup",
+    "municipality sanitation",
+    "solid waste management",
+    "Tamil Nadu municipalities",
   ],
   openGraph: {
-    title: "CivicEye — See It. Report It. Fix It.",
+    title: "SGCS — Smart Garbage Collection System",
     description:
-      "Transforming citizen reports into real civic action with AI-assisted reporting.",
+      "Transforming municipal waste collection with on-demand doorstep requests and intelligent sanitation dispatch.",
     type: "website",
   },
   icons: {
@@ -41,14 +41,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#090909",
-  colorScheme: "dark",
+  themeColor: "#2563eb",
+  colorScheme: "light",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={cn(dmSans.variable, geistMono.variable)}>
-      <body className="min-h-screen bg-ink text-white antialiased">{children}</body>
+      <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">{children}</body>
     </html>
   );
 }

@@ -6,9 +6,9 @@ import { Building2 } from "lucide-react";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Municipality Authority Portal — CivicEye",
+  title: "Municipality Authority Portal — SGCS",
   description:
-    "Official authority login and department dispatch console for public complaint management.",
+    "Official authority login and department dispatch console for waste pickup management.",
 };
 
 export default function MunicipalityLoginPage() {

@@ -97,10 +97,10 @@ export async function GET() {
 
     if (error) throw error;
 
-    return NextResponse.json({ issues: data && data.length > 0 ? data : mockIssues });
+    return NextResponse.json({ issues: data && data.length > 0 ? data : [] });
   } catch {
     return NextResponse.json({
-      issues: mockIssues,
+      issues: [],
     });
   }
 }

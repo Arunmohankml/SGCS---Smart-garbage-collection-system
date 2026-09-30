@@ -4,9 +4,9 @@ import { Footer } from "@/components/landing/footer";
 import { MunicipalityDashboard } from "@/components/municipality/dashboard";
 
 export const metadata: Metadata = {
-  title: "Municipality Dashboard — CivicEye Authority Console",
+  title: "Municipality Dashboard — SGCS Authority Console",
   description:
-    "Manage, prioritize, and resolve citizen complaints by department in real-time.",
+    "Manage, prioritize, and resolve citizen waste collection requests by municipality in real-time.",
 };
 
 export default function MunicipalityDashboardPage() {

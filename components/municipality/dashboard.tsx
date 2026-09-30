@@ -19,6 +19,12 @@ import {
   Phone,
   UserCheck,
   Package,
+  ChevronDown,
+  Search,
+  X,
+  RotateCcw,
+  Filter,
+  Layers,
 } from "lucide-react";
 import { StatusBadge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -47,6 +53,7 @@ export function MunicipalityDashboard() {
   const [selectedWard, setSelectedWard] = useState<string>("all");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   // Crew dispatch assignment modal/inline state
@@ -56,7 +63,14 @@ export function MunicipalityDashboard() {
   // Local state for uploaded collection proof images
   const [proofImages, setProofImages] = useState<Record<string, string>>({});
 
-  // Filter requests categorized by Municipality, Category, and Status
+  const resetFilters = () => {
+    setSelectedWard("all");
+    setSelectedCategory("all");
+    setSelectedStatus("all");
+    setSearchQuery("");
+  };
+
+  // Filter requests categorized by Municipality, Category, Status, and Search Query
   const visible = issues.filter((i) => {
     const matchesWard = selectedWard === "all" || i.municipality === selectedWard;
     const matchesCategory = selectedCategory === "all" || i.category === selectedCategory;
@@ -71,7 +85,24 @@ export function MunicipalityDashboard() {
         ? i.status === "resolved"
         : true;
 
-    return matchesWard && matchesCategory && matchesStatus;
+    if (!matchesWard || !matchesCategory || !matchesStatus) return false;
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      const haystack = (
+        i.title +
+        i.description +
+        (i.address || "") +
+        (i.landmark || "") +
+        (i.municipality || "") +
+        (i.reference || "") +
+        (i.contactPhone || "") +
+        (i.assignedCrew || "")
+      ).toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+
+    return true;
   });
 
   const totalCount = issues.length;
@@ -175,106 +206,113 @@ export function MunicipalityDashboard() {
         ))}
       </div>
 
-      {/* Categorized Filter Controls */}
-      <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-xs space-y-5">
-        {/* Filter 1: By Municipality Ward */}
-        <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-            1. Categorize by Municipality Ward:
-          </label>
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setSelectedWard("all")}
-              className={cn(
-                "rounded-full border px-3.5 py-1.5 text-xs font-bold transition-all",
-                selectedWard === "all"
-                  ? "border-blue-600 bg-blue-600 text-white shadow-xs"
-                  : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
-              )}
-            >
-              All Wards ({issues.length})
-            </button>
-            {MUNICIPALITIES.map((mun) => {
-              const count = issues.filter((i) => i.municipality === mun).length;
-              return (
+      {/* Categorized Filter Controls - Clean Expandable Dropdowns */}
+      <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs">
+        <div className="flex flex-col gap-4">
+          {/* Top Search & Reset Row */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by tracking code, citizen address, landmark, or crew..."
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-9 text-xs font-medium outline-none transition-colors placeholder:text-slate-400 focus:border-blue-600 focus:bg-white text-slate-900"
+              />
+              {searchQuery && (
                 <button
-                  key={mun}
-                  onClick={() => setSelectedWard(mun)}
-                  className={cn(
-                    "rounded-full border px-3.5 py-1.5 text-xs font-bold transition-all",
-                    selectedWard === mun
-                      ? "border-blue-600 bg-blue-600 text-white shadow-xs"
-                      : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
-                  )}
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
                 >
-                  {mun} ({count})
+                  <X className="h-3.5 w-3.5" />
                 </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Filter 2: By Waste Category */}
-        <div className="border-t border-slate-100 pt-4">
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-            2. Categorize by Waste Type:
-          </label>
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setSelectedCategory("all")}
-              className={cn(
-                "rounded-full border px-3 py-1.5 text-xs font-bold transition-all",
-                selectedCategory === "all"
-                  ? "border-blue-600 bg-blue-600 text-white shadow-xs"
-                  : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
               )}
-            >
-              All Types
-            </button>
-            {(Object.keys(CATEGORY_LABELS) as IssueCategory[])
-              .filter((c) => c !== "pothole" && c !== "garbage" && c !== "other")
-              .map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={cn(
-                    "rounded-full border px-3 py-1.5 text-xs font-bold transition-all",
-                    selectedCategory === cat
-                      ? "border-blue-600 bg-blue-600 text-white shadow-xs"
-                      : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
-                  )}
-                >
-                  {CATEGORY_LABELS[cat]}
-                </button>
-              ))}
-          </div>
-        </div>
+            </div>
 
-        {/* Filter 3: By Status */}
-        <div className="border-t border-slate-100 pt-4">
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-            3. Filter by Status:
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {[
-              { id: "all", label: "All Statuses" },
-              { id: "pending", label: "Pending Pickup" },
-              { id: "dispatched", label: "Crew En Route" },
-              { id: "collected", label: "Collected & Cleared" },
-            ].map((st) => (
+            {(selectedWard !== "all" || selectedCategory !== "all" || selectedStatus !== "all" || searchQuery) && (
               <button
-                key={st.id}
-                onClick={() => setSelectedStatus(st.id)}
-                className={cn(
-                  "rounded-full border px-3.5 py-1.5 text-xs font-bold transition-all",
-                  selectedStatus === st.id
-                    ? "border-slate-900 bg-slate-900 text-white shadow-xs"
-                    : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
-                )}
+                onClick={resetFilters}
+                className="inline-flex items-center justify-center gap-1.5 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors shrink-0"
               >
-                {st.label}
+                <RotateCcw className="h-3.5 w-3.5" />
+                <span>Reset Filters</span>
               </button>
-            ))}
+            )}
+          </div>
+
+          {/* 3 Expandable Dropdown Selects */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-slate-100">
+            {/* 1. Municipality Ward Dropdown */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                <Building2 className="h-3.5 w-3.5 text-blue-600" />
+                Municipality Ward
+              </label>
+              <div className="relative">
+                <select
+                  value={selectedWard}
+                  onChange={(e) => setSelectedWard(e.target.value)}
+                  className="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 pr-9 text-xs font-bold text-slate-800 transition-colors focus:border-blue-600 focus:bg-white focus:outline-none"
+                >
+                  <option value="all">All Municipality Wards ({issues.length})</option>
+                  {MUNICIPALITIES.map((mun) => {
+                    const count = issues.filter((i) => i.municipality === mun).length;
+                    return (
+                      <option key={mun} value={mun}>
+                        {mun} ({count})
+                      </option>
+                    );
+                  })}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+              </div>
+            </div>
+
+            {/* 2. Waste Category Dropdown */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                <Layers className="h-3.5 w-3.5 text-emerald-600" />
+                Waste Category
+              </label>
+              <div className="relative">
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 pr-9 text-xs font-bold text-slate-800 transition-colors focus:border-blue-600 focus:bg-white focus:outline-none"
+                >
+                  <option value="all">All Waste Types</option>
+                  {(Object.keys(CATEGORY_LABELS) as IssueCategory[])
+                    .filter((c) => c !== "pothole" && c !== "garbage" && c !== "other")
+                    .map((cat) => (
+                      <option key={cat} value={cat}>
+                        {CATEGORY_LABELS[cat]}
+                      </option>
+                    ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+              </div>
+            </div>
+
+            {/* 3. Collection Status Dropdown */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                <Clock className="h-3.5 w-3.5 text-amber-500" />
+                Collection Status
+              </label>
+              <div className="relative">
+                <select
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  className="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 pr-9 text-xs font-bold text-slate-800 transition-colors focus:border-blue-600 focus:bg-white focus:outline-none"
+                >
+                  <option value="all">All Statuses ({totalCount})</option>
+                  <option value="pending">Pending Pickup ({pendingCount})</option>
+                  <option value="dispatched">Crew En Route / Dispatched ({dispatchedCount})</option>
+                  <option value="collected">Collected & Cleared ({collectedCount})</option>
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -291,9 +329,33 @@ export function MunicipalityDashboard() {
         </div>
 
         {visible.length === 0 ? (
-          <div className="p-12 text-center text-slate-500 font-medium text-sm">
-            No collection requests match your selected categories.
-          </div>
+          issues.length === 0 ? (
+            <div className="p-12 text-center">
+              <div className="mx-auto w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
+                <CheckCircle2 className="h-6 w-6" />
+              </div>
+              <p className="text-base font-bold text-slate-900">Queue is Clear — All Caught Up!</p>
+              <p className="text-xs font-medium text-slate-500 max-w-md mx-auto mt-1">
+                No active waste collection requests in the system right now. Incoming doorstep pickup requests from citizens across all 14 municipalities will appear here in real-time.
+              </p>
+            </div>
+          ) : (
+            <div className="p-12 text-center">
+              <div className="mx-auto w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center mb-3">
+                <Filter className="h-6 w-6" />
+              </div>
+              <p className="text-base font-bold text-slate-900">No requests match the selected filters</p>
+              <p className="text-xs font-medium text-slate-500 max-w-md mx-auto mt-1 mb-4">
+                Try selecting a different municipality ward, waste category, or collection status.
+              </p>
+              <button
+                onClick={resetFilters}
+                className="inline-flex items-center gap-1.5 rounded-full bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-700 transition-colors"
+              >
+                <RotateCcw className="h-3.5 w-3.5" /> Reset Filters
+              </button>
+            </div>
+          )
         ) : (
           visible.map((issue) => {
             const mainImage = issue.images?.find((img) => img.kind === "report")?.url || issue.images?.[0]?.url;

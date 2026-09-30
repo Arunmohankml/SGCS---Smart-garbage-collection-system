@@ -1,24 +1,22 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import {
   Search,
-  LayoutGrid,
-  ListFilter,
-  MapPin,
   X,
   Truck,
-  Leaf,
-  Recycle,
-  Cpu,
-  Package,
-  AlertTriangle,
-  Sparkles,
   Building2,
+  ChevronDown,
+  Layers,
+  Clock,
+  ArrowUpDown,
+  RotateCcw,
+  Filter,
+  Plus,
 } from "lucide-react";
 import { IssueCard } from "@/components/issues/issue-card";
 import { IssueDrawer } from "@/components/issues/issue-drawer";
-import { cn } from "@/lib/utils";
 import {
   CATEGORY_LABELS,
   MUNICIPALITIES,
@@ -27,23 +25,6 @@ import {
   type IssueStatus,
 } from "@/lib/types";
 import { useIssuesStore } from "@/lib/issues-store";
-
-const CategoryIcons: Record<string, any> = {
-  organic_kitchen: Leaf,
-  dry_recyclable: Recycle,
-  electronic_ewaste: Cpu,
-  bulky_debris: Package,
-  hazardous_sanitary: AlertTriangle,
-  garden_green: Sparkles,
-  all: LayoutGrid,
-};
-
-const statusTabs: { label: string; value: "all" | IssueStatus }[] = [
-  { label: "All Pickups", value: "all" },
-  { label: "Pending", value: "open" },
-  { label: "Crew Dispatched", value: "in_progress" },
-  { label: "Collected", value: "resolved" },
-];
 
 type SortOption = "priority" | "votes" | "recent";
 
@@ -55,6 +36,21 @@ export function IssuesExplorer({ limit }: { limit?: number }) {
   const [municipality, setMunicipality] = useState<string>("all");
   const [sortBy, setSortBy] = useState<SortOption>("recent");
   const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
+
+  const resetFilters = () => {
+    setQuery("");
+    setTab("all");
+    setCat("all");
+    setMunicipality("all");
+    setSortBy("recent");
+  };
+
+  const hasActiveFilters =
+    Boolean(query) ||
+    tab !== "all" ||
+    cat !== "all" ||
+    municipality !== "all" ||
+    sortBy !== "recent";
 
   const filtered = useMemo(() => {
     let result = issues.filter((issue) => {
@@ -95,111 +91,131 @@ export function IssuesExplorer({ limit }: { limit?: number }) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6">
-      {/* Top Filter & Toolbar Bar */}
-      <div className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-xs">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          {/* Large Search Input */}
+      {/* Top Filter & Toolbar Bar - Clean Expandable Dropdowns */}
+      <div className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs">
+        {/* Search & Reset Row */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by address, landmark, ward, or tracking code..."
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-12 pr-10 text-sm font-medium outline-none transition-colors placeholder:text-slate-400 focus:border-blue-600 focus:bg-white text-slate-900"
+              placeholder="Search by address, landmark, municipality, or tracking code..."
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-9 text-xs font-medium outline-none transition-colors placeholder:text-slate-400 focus:border-blue-600 focus:bg-white text-slate-900"
             />
             {query && (
               <button
                 onClick={() => setQuery("")}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1"
               >
-                <X className="h-4 w-4" />
+                <X className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
 
-          {/* Municipality Ward Dropdown Filter */}
-          <div className="flex items-center gap-2">
-            <Building2 className="h-4 w-4 text-blue-600 shrink-0" />
-            <select
-              value={municipality}
-              onChange={(e) => setMunicipality(e.target.value)}
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-bold text-slate-800 focus:outline-none"
+          {hasActiveFilters && (
+            <button
+              onClick={resetFilters}
+              className="inline-flex items-center justify-center gap-1.5 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors shrink-0"
             >
-              <option value="all">All Municipality Wards</option>
-              {MUNICIPALITIES.map((mun) => (
-                <option key={mun} value={mun}>
-                  {mun}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Status Tabs */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            {statusTabs.map((t) => (
-              <button
-                key={t.value}
-                onClick={() => setTab(t.value)}
-                className={cn(
-                  "rounded-full border px-4 py-2 font-bold text-xs transition-all shadow-2xs",
-                  tab === t.value
-                    ? "border-blue-600 bg-blue-600 text-white"
-                    : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
-                )}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
+              <RotateCcw className="h-3.5 w-3.5" />
+              <span>Reset Filters</span>
+            </button>
+          )}
         </div>
 
-        {/* Waste Category Chips Bar */}
-        <div className="flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              onClick={() => setCat("all")}
-              className={cn(
-                "rounded-full border px-3.5 py-1.5 text-xs font-bold transition-all",
-                cat === "all"
-                  ? "border-slate-900 bg-slate-900 text-white"
-                  : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
-              )}
-            >
-              All Types
-            </button>
-            {(Object.keys(CATEGORY_LABELS) as IssueCategory[])
-              .filter((c) => c !== "pothole" && c !== "garbage" && c !== "other")
-              .map((c) => {
-                const Icon = CategoryIcons[c] || LayoutGrid;
-                return (
-                  <button
-                    key={c}
-                    onClick={() => setCat(c)}
-                    className={cn(
-                      "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-bold transition-all",
-                      cat === c
-                        ? "border-blue-600 bg-blue-600 text-white shadow-2xs"
-                        : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
-                    )}
-                  >
-                    <Icon className="h-3.5 w-3.5" />
-                    <span>{CATEGORY_LABELS[c]}</span>
-                  </button>
-                );
-              })}
+        {/* 4 Expandable Dropdown Selects */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3 border-t border-slate-100">
+          {/* 1. Municipality Ward Dropdown */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+              <Building2 className="h-3.5 w-3.5 text-blue-600" />
+              Municipality Ward
+            </label>
+            <div className="relative">
+              <select
+                value={municipality}
+                onChange={(e) => setMunicipality(e.target.value)}
+                className="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 pr-9 text-xs font-bold text-slate-800 transition-colors focus:border-blue-600 focus:bg-white focus:outline-none"
+              >
+                <option value="all">All Municipality Wards ({issues.length})</option>
+                {MUNICIPALITIES.map((mun) => {
+                  const count = issues.filter((i) => i.municipality === mun).length;
+                  return (
+                    <option key={mun} value={mun}>
+                      {mun} ({count})
+                    </option>
+                  );
+                })}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Sort:</span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700 focus:outline-none"
-            >
-              <option value="recent">Most Recent</option>
-              <option value="priority">Urgency Priority</option>
-              <option value="votes">Community Requests</option>
-            </select>
+          {/* 2. Waste Category Dropdown */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+              <Layers className="h-3.5 w-3.5 text-emerald-600" />
+              Waste Category
+            </label>
+            <div className="relative">
+              <select
+                value={cat}
+                onChange={(e) => setCat(e.target.value as "all" | IssueCategory)}
+                className="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 pr-9 text-xs font-bold text-slate-800 transition-colors focus:border-blue-600 focus:bg-white focus:outline-none"
+              >
+                <option value="all">All Waste Types</option>
+                {(Object.keys(CATEGORY_LABELS) as IssueCategory[])
+                  .filter((c) => c !== "pothole" && c !== "garbage" && c !== "other")
+                  .map((c) => (
+                    <option key={c} value={c}>
+                      {CATEGORY_LABELS[c]}
+                    </option>
+                  ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+            </div>
+          </div>
+
+          {/* 3. Pickup Status Dropdown */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+              <Clock className="h-3.5 w-3.5 text-amber-500" />
+              Pickup Status
+            </label>
+            <div className="relative">
+              <select
+                value={tab}
+                onChange={(e) => setTab(e.target.value as "all" | IssueStatus)}
+                className="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 pr-9 text-xs font-bold text-slate-800 transition-colors focus:border-blue-600 focus:bg-white focus:outline-none"
+              >
+                <option value="all">All Pickup Statuses</option>
+                <option value="open">Pending Pickup</option>
+                <option value="in_progress">Crew Dispatched / En Route</option>
+                <option value="resolved">Doorstep Collected</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+            </div>
+          </div>
+
+          {/* 4. Sort By Dropdown */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+              <ArrowUpDown className="h-3.5 w-3.5 text-purple-600" />
+              Sort Priority
+            </label>
+            <div className="relative">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as SortOption)}
+                className="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 pr-9 text-xs font-bold text-slate-800 transition-colors focus:border-blue-600 focus:bg-white focus:outline-none"
+              >
+                <option value="recent">Most Recent Requests</option>
+                <option value="priority">Urgency Priority Score</option>
+                <option value="votes">Most Community Upvotes</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+            </div>
           </div>
         </div>
       </div>
@@ -207,13 +223,38 @@ export function IssuesExplorer({ limit }: { limit?: number }) {
       {/* Grid of Collection Cards */}
       <div className="mt-8">
         {filtered.length === 0 ? (
-          <div className="rounded-3xl border border-slate-200 bg-white p-12 text-center">
-            <Truck className="mx-auto h-10 w-10 text-slate-400 mb-3" />
-            <p className="text-base font-bold text-slate-900">No collection requests found</p>
-            <p className="text-xs font-medium text-slate-500 mt-1">
-              Try adjusting your ward or waste type filters.
-            </p>
-          </div>
+          issues.length === 0 ? (
+            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-12 text-center shadow-xs">
+              <div className="mx-auto w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
+                <Truck className="h-7 w-7" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900">No Pickup Requests Yet</h3>
+              <p className="text-sm text-slate-500 max-w-md mx-auto mt-1 mb-6">
+                There are currently no active waste collection requests in the system. Be the first citizen to request a doorstep garbage collection!
+              </p>
+              <Link href="/report">
+                <button className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-md shadow-blue-600/20 hover:bg-blue-700 transition-all">
+                  <Plus className="h-4 w-4" /> Request Doorstep Pickup
+                </button>
+              </Link>
+            </div>
+          ) : (
+            <div className="rounded-3xl border border-slate-200 bg-white p-12 text-center">
+              <div className="mx-auto w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center mb-3">
+                <Filter className="h-6 w-6" />
+              </div>
+              <p className="text-base font-bold text-slate-900">No matching requests found</p>
+              <p className="text-xs font-medium text-slate-500 mt-1 mb-4">
+                No collection requests match your selected municipality, category, or status filter.
+              </p>
+              <button
+                onClick={resetFilters}
+                className="inline-flex items-center gap-1.5 rounded-full bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-700 transition-colors"
+              >
+                <RotateCcw className="h-3.5 w-3.5" /> Clear All Filters
+              </button>
+            </div>
+          )
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((issue) => (

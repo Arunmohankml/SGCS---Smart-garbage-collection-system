@@ -6,8 +6,8 @@ import { useState } from "react";
 
 const faqs = [
   {
-    q: "What is CivicEye Smart Garbage Collection?",
-    a: "CivicEye is a dedicated public portal connecting citizens directly with municipal sanitation departments. When you have garbage at home or in your community, you can request a pickup online, and government admins dispatch crews to collect it.",
+    q: "What is SGCS Smart Garbage Collection?",
+    a: "SGCS (Smart Garbage Collection System) is a dedicated public portal connecting citizens directly with municipal sanitation departments. When you have garbage at home or in your community, you can request a pickup online, and government admins dispatch crews to collect it.",
   },
   {
     q: "How do I request a waste pickup from my home?",

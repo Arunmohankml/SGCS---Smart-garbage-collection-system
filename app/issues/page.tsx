@@ -5,7 +5,7 @@ import { IssuesExplorer } from "@/components/issues/issues-explorer";
 import { ShieldCheck, Truck } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Live Waste Collection Tracker — CivicEye",
+  title: "Live Waste Collection Tracker — SGCS",
   description:
     "Track active doorstep and neighborhood garbage collections, assigned municipal sanitation vehicles, and verified cleanup proofs.",
 };

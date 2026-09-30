@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { type Issue, type IssueCategory, type IssueStatus, type IssueImage } from "@/lib/types";
 
-const CUSTOM_ISSUES_KEY = "civiceye_garbage_requests_v3";
-const STORE_CHANGE_EVENT = "civiceye_garbage_store_changed";
-const DELETED_ISSUES_KEY = "civiceye_deleted_garbage_v3";
+const CUSTOM_ISSUES_KEY = "sgcs_garbage_requests_v1";
+const STORE_CHANGE_EVENT = "sgcs_garbage_store_changed";
+const DELETED_ISSUES_KEY = "sgcs_deleted_garbage_v1";
 
 function getStoredCustomIssues(): Issue[] {
   if (typeof window === "undefined") return [];

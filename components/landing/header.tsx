@@ -51,8 +51,8 @@ export function Header() {
         className={cn(
           "flex items-center justify-between rounded-full px-6 py-3 transition-all duration-300 ease-in-out border",
           scrolled
-            ? "bg-white/95 border-slate-200/90 shadow-xl shadow-slate-900/5 backdrop-blur-xl"
-            : "bg-white/90 border-slate-200/70 shadow-md shadow-slate-900/5 backdrop-blur-md"
+            ? "bg-white/98 border-slate-300 shadow-xl shadow-slate-900/10 backdrop-blur-xl"
+            : "bg-white/95 border-slate-300 shadow-md shadow-slate-900/5 backdrop-blur-md"
         )}
       >
         {/* Brand Logo: SGCS */}
@@ -65,7 +65,7 @@ export function Header() {
         </Link>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden lg:flex items-center gap-1.5 p-1 rounded-full bg-slate-100/70 border border-slate-200/50">
+        <div className="hidden lg:flex items-center gap-1.5 p-1 rounded-full bg-slate-100 border border-slate-200">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
@@ -76,11 +76,11 @@ export function Header() {
                 className={cn(
                   "inline-flex items-center gap-2 px-4 py-2 text-xs font-bold transition-all duration-200 rounded-full whitespace-nowrap",
                   isActive
-                    ? "bg-white text-blue-700 shadow-xs font-extrabold"
-                    : "text-slate-650 hover:text-slate-950 hover:bg-white/60 font-semibold"
+                    ? "bg-blue-600 text-white shadow-xs font-extrabold"
+                    : "text-slate-800 hover:text-blue-600 hover:bg-white font-bold"
                 )}
               >
-                <Icon className={cn("h-3.5 w-3.5", isActive ? "text-blue-600" : "text-slate-400")} />
+                <Icon className={cn("h-3.5 w-3.5", isActive ? "text-white" : "text-slate-500")} />
                 <span>{item.label}</span>
               </Link>
             );
@@ -91,7 +91,7 @@ export function Header() {
         <div className="hidden sm:flex items-center gap-3">
           {user ? (
             <div className="flex items-center gap-2">
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50/80 px-3.5 py-2 text-xs font-bold text-blue-900 whitespace-nowrap">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-2 text-xs font-bold text-blue-900 whitespace-nowrap">
                 {user.role === "authority" ? (
                   <ShieldCheck className="h-3.5 w-3.5 text-blue-600 shrink-0" />
                 ) : (
@@ -102,7 +102,7 @@ export function Header() {
 
               <button
                 onClick={logout}
-                className="rounded-full bg-white border border-slate-200 p-2.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors shadow-2xs"
+                className="rounded-full bg-white border border-slate-300 p-2.5 text-slate-700 hover:bg-slate-100 hover:text-slate-950 transition-colors shadow-2xs"
                 title="Logout"
               >
                 <LogOut className="h-4 w-4" />
@@ -117,7 +117,7 @@ export function Header() {
           ) : (
             <div className="flex items-center gap-2.5">
               <Link href="/municipality">
-                <button className="h-10 px-4 text-xs font-bold text-slate-700 hover:text-slate-950 hover:bg-slate-100/80 rounded-full transition-colors whitespace-nowrap flex items-center gap-1.5">
+                <button className="h-10 px-4 text-xs font-bold text-slate-800 hover:text-blue-600 hover:bg-slate-100 rounded-full transition-colors whitespace-nowrap flex items-center gap-1.5">
                   <Building2 className="h-3.5 w-3.5 text-blue-600" />
                   Admin Sign In
                 </button>
@@ -134,7 +134,7 @@ export function Header() {
 
         {/* Mobile Menu Toggle button */}
         <button
-          className="rounded-full border border-slate-200 bg-slate-50 p-2 text-slate-700 hover:bg-slate-100 lg:hidden"
+          className="rounded-full border border-slate-300 bg-slate-50 p-2 text-slate-800 hover:bg-slate-100 lg:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
         >
@@ -144,7 +144,7 @@ export function Header() {
 
       {/* Mobile Menu Panel */}
       {open && (
-        <div className="mt-2 w-full rounded-3xl bg-white/95 border border-slate-200 p-5 shadow-2xl backdrop-blur-xl animate-fade-in lg:hidden">
+        <div className="mt-2 w-full rounded-3xl bg-white border border-slate-300 p-5 shadow-2xl backdrop-blur-xl animate-fade-in lg:hidden">
           <div className="flex flex-col gap-2">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
@@ -157,17 +157,17 @@ export function Header() {
                   className={cn(
                     "flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-2xl transition-colors",
                     isActive
-                      ? "bg-blue-50 text-blue-700"
-                      : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                      ? "bg-blue-600 text-white"
+                      : "text-slate-800 hover:bg-slate-50 hover:text-slate-950"
                   )}
                 >
-                  <Icon className="h-4 w-4 text-blue-600" />
+                  <Icon className={cn("h-4 w-4", isActive ? "text-white" : "text-blue-600")} />
                   <span>{item.label}</span>
                 </Link>
               );
             })}
 
-            <div className="border-t border-slate-100 pt-3 mt-1 flex flex-col gap-2">
+            <div className="border-t border-slate-200 pt-3 mt-1 flex flex-col gap-2">
               <Link href="/report" onClick={() => setOpen(false)}>
                 <button className="w-full h-11 text-xs font-bold uppercase tracking-wider rounded-full bg-blue-600 text-white flex items-center justify-center gap-2 shadow-sm">
                   <Plus className="h-4 w-4" /> Request Pickup
@@ -180,13 +180,13 @@ export function Header() {
                     logout();
                     setOpen(false);
                   }}
-                  className="w-full h-11 text-xs font-bold text-slate-700 border border-slate-200 rounded-full flex items-center justify-center gap-2 hover:bg-slate-50"
+                  className="w-full h-11 text-xs font-bold text-slate-800 border border-slate-300 rounded-full flex items-center justify-center gap-2 hover:bg-slate-50"
                 >
                   <LogOut className="h-4 w-4" /> Sign Out
                 </button>
               ) : (
                 <Link href="/municipality" onClick={() => setOpen(false)}>
-                  <button className="w-full h-11 text-xs font-bold text-slate-700 border border-slate-200 rounded-full flex items-center justify-center gap-2 hover:bg-slate-50">
+                  <button className="w-full h-11 text-xs font-bold text-slate-800 border border-slate-300 rounded-full flex items-center justify-center gap-2 hover:bg-slate-50">
                     <Building2 className="h-4 w-4 text-blue-600" /> Admin Sign In
                   </button>
                 </Link>

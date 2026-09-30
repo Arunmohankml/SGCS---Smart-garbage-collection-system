@@ -5,7 +5,7 @@ import { Logo } from "@/components/ui/logo";
 import { ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Sign In — CivicEye",
+  title: "Sign In — SGCS",
 };
 
 export default function LoginPage() {
