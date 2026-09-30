@@ -4,7 +4,8 @@ import { Logo } from "@/components/ui/logo";
 const links = {
   Services: [
     { label: "Request Waste Pickup", href: "/report" },
-    { label: "Live Pickup Tracker", href: "/issues" },
+    { label: "My Reports", href: "/my-reports" },
+    { label: "Citizen Sign In", href: "/login" },
     { label: "Ward Admin Desk", href: "/municipality" },
   ],
   Operations: [

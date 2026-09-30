@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Plus, Truck } from "lucide-react";
+import { ArrowRight, Plus, ClipboardList } from "lucide-react";
 
 export function Cta() {
   return (
@@ -22,13 +22,13 @@ export function Cta() {
               <Plus className="h-4 w-4 stroke-[2.5]" /> Request Garbage Pickup <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
-          <Link href="/issues">
+          <Link href="/my-reports">
             <Button
               size="lg"
               variant="outline"
-              className="flex items-center gap-2 text-sm font-bold px-8 py-4 h-13 rounded-full border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 shadow-xs uppercase tracking-wider"
+              className="flex items-center gap-2 text-sm font-bold px-8 py-4 h-13 rounded-full border border-slate-300 text-slate-800 bg-white hover:bg-slate-50 shadow-xs uppercase tracking-wider"
             >
-              <Truck className="h-4 w-4 text-blue-600" /> Track Active Pickups
+              <ClipboardList className="h-4 w-4 text-blue-600" /> My Reports
             </Button>
           </Link>
         </div>

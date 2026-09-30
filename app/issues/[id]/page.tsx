@@ -6,7 +6,7 @@ export default function IssueDetailPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-black text-white pb-24 pt-28">
+      <main className="min-h-screen bg-slate-50 text-slate-900 pb-24 pt-32">
         <IssueDetail />
       </main>
       <Footer />

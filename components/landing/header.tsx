@@ -11,9 +11,9 @@ import {
   User,
   Building2,
   Plus,
-  Truck,
   HelpCircle,
   ShieldCheck,
+  ClipboardList,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/logo";
@@ -21,7 +21,7 @@ import { useAuth } from "@/lib/auth";
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
-  { href: "/issues", label: "Pickup Tracker", icon: Truck },
+  { href: "/my-reports", label: "My Reports", icon: ClipboardList },
   { href: "/municipality", label: "Ward Admin Desk", icon: Building2 },
   { href: "/#faq", label: "FAQ", icon: HelpCircle },
 ];
@@ -49,7 +49,7 @@ export function Header() {
     <header className="fixed top-5 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl transition-all duration-300">
       <nav
         className={cn(
-          "flex items-center justify-between rounded-full px-6 py-3 transition-all duration-300 ease-in-out border",
+          "flex items-center justify-between rounded-full px-5 sm:px-6 py-3 transition-all duration-300 ease-in-out border",
           scrolled
             ? "bg-white/98 border-slate-300 shadow-xl shadow-slate-900/10 backdrop-blur-xl"
             : "bg-white/95 border-slate-300 shadow-md shadow-slate-900/5 backdrop-blur-md"
@@ -88,22 +88,29 @@ export function Header() {
         </div>
 
         {/* Desktop Right Side Actions */}
-        <div className="hidden sm:flex items-center gap-3">
+        <div className="hidden sm:flex items-center gap-2.5">
           {user ? (
             <div className="flex items-center gap-2">
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-2 text-xs font-bold text-blue-900 whitespace-nowrap">
+              <Link
+                href={user.role === "authority" ? "/municipality/dashboard" : "/my-reports"}
+                className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-2 text-xs font-bold text-blue-900 whitespace-nowrap hover:bg-blue-100/80 transition-colors"
+                title={user.role === "authority" ? "Ward Admin Desk" : "My Reports"}
+              >
                 {user.role === "authority" ? (
                   <ShieldCheck className="h-3.5 w-3.5 text-blue-600 shrink-0" />
                 ) : (
                   <User className="h-3.5 w-3.5 text-blue-600 shrink-0" />
                 )}
                 <span>{user.name.split(" ")[0]}</span>
-              </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-blue-200/80 text-blue-800 px-1.5 py-0.5 rounded-full">
+                  {user.role === "authority" ? "Admin" : "Citizen"}
+                </span>
+              </Link>
 
               <button
                 onClick={logout}
                 className="rounded-full bg-white border border-slate-300 p-2.5 text-slate-700 hover:bg-slate-100 hover:text-slate-950 transition-colors shadow-2xs"
-                title="Logout"
+                title="Sign Out"
               >
                 <LogOut className="h-4 w-4" />
               </button>
@@ -115,10 +122,17 @@ export function Header() {
               </Link>
             </div>
           ) : (
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2">
+              <Link href="/login">
+                <button className="h-10 px-3.5 text-xs font-bold text-slate-800 hover:text-blue-600 hover:bg-slate-100 rounded-full transition-colors whitespace-nowrap flex items-center gap-1.5">
+                  <User className="h-3.5 w-3.5 text-blue-600" />
+                  Citizen Sign In
+                </button>
+              </Link>
+
               <Link href="/municipality">
-                <button className="h-10 px-4 text-xs font-bold text-slate-800 hover:text-blue-600 hover:bg-slate-100 rounded-full transition-colors whitespace-nowrap flex items-center gap-1.5">
-                  <Building2 className="h-3.5 w-3.5 text-blue-600" />
+                <button className="h-10 px-3.5 text-xs font-bold text-slate-700 hover:text-blue-600 hover:bg-slate-100 rounded-full transition-colors whitespace-nowrap flex items-center gap-1.5">
+                  <Building2 className="h-3.5 w-3.5 text-slate-600" />
                   Admin Sign In
                 </button>
               </Link>
@@ -182,14 +196,22 @@ export function Header() {
                   }}
                   className="w-full h-11 text-xs font-bold text-slate-800 border border-slate-300 rounded-full flex items-center justify-center gap-2 hover:bg-slate-50"
                 >
-                  <LogOut className="h-4 w-4" /> Sign Out
+                  <LogOut className="h-4 w-4" /> Sign Out ({user.name.split(" ")[0]})
                 </button>
               ) : (
-                <Link href="/municipality" onClick={() => setOpen(false)}>
-                  <button className="w-full h-11 text-xs font-bold text-slate-800 border border-slate-300 rounded-full flex items-center justify-center gap-2 hover:bg-slate-50">
-                    <Building2 className="h-4 w-4 text-blue-600" /> Admin Sign In
-                  </button>
-                </Link>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link href="/login" onClick={() => setOpen(false)}>
+                    <button className="w-full h-11 text-xs font-bold text-slate-800 border border-slate-300 rounded-full flex items-center justify-center gap-1.5 hover:bg-slate-50">
+                      <User className="h-3.5 w-3.5 text-blue-600" /> Citizen Sign In
+                    </button>
+                  </Link>
+
+                  <Link href="/municipality" onClick={() => setOpen(false)}>
+                    <button className="w-full h-11 text-xs font-bold text-slate-800 border border-slate-300 rounded-full flex items-center justify-center gap-1.5 hover:bg-slate-50">
+                      <Building2 className="h-3.5 w-3.5 text-slate-600" /> Admin Sign In
+                    </button>
+                  </Link>
+                </div>
               )}
             </div>
           </div>

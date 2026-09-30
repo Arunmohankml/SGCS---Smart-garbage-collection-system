@@ -29,10 +29,10 @@ export function IssueDetail() {
 
   if (!issue) {
     return (
-      <div className="py-24 text-center text-slate-650 font-medium text-base">
+      <div className="py-24 text-center text-slate-700 font-medium text-base">
         Collection request not found.{" "}
-        <Link href="/issues" className="text-blue-600 font-bold underline ml-1">
-          Return to live collection queue
+        <Link href="/my-reports" className="text-blue-600 font-bold underline ml-1">
+          Return to My Reports
         </Link>
       </div>
     );
@@ -53,10 +53,10 @@ export function IssueDetail() {
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6">
       <Link
-        href="/issues"
+        href="/my-reports"
         className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 transition-colors hover:text-blue-600 mb-6"
       >
-        <ArrowLeft className="h-4 w-4" /> Back to Collection Queue
+        <ArrowLeft className="h-4 w-4" /> Back to My Reports
       </Link>
 
       {/* Main Ticket Card */}

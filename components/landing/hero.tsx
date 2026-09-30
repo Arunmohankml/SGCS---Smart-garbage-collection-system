@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Plus, Search, ShieldCheck, Truck } from "lucide-react";
+import { ArrowRight, Plus, Search, ShieldCheck, Truck, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Hero() {
@@ -49,13 +49,13 @@ export function Hero() {
             </Button>
           </Link>
 
-          <Link href="/issues">
+          <Link href="/my-reports">
             <Button
               size="lg"
               variant="outline"
-              className="flex items-center gap-2 text-sm font-bold px-8 py-4 h-13 rounded-full border border-slate-200 text-slate-800 bg-white/60 hover:bg-white/85 shadow-xs uppercase tracking-wider backdrop-blur-md"
+              className="flex items-center gap-2 text-sm font-bold px-8 py-4 h-13 rounded-full border border-slate-300 text-slate-800 bg-white/80 hover:bg-white shadow-xs uppercase tracking-wider backdrop-blur-md"
             >
-              <Truck className="h-4 w-4 text-blue-600" /> Track Collection Queue
+              <ClipboardList className="h-4 w-4 text-blue-600" /> My Reports
             </Button>
           </Link>
         </div>

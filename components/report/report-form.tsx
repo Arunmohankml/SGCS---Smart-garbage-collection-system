@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Camera,
@@ -20,6 +20,7 @@ import {
   Phone,
   ArrowRight,
   ShieldCheck,
+  ClipboardList,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -31,6 +32,7 @@ import {
   type YoloDetectionResult,
 } from "@/lib/types";
 import { useIssuesStore } from "@/lib/issues-store";
+import { useAuth } from "@/lib/auth";
 
 const wasteCategoryCards: { id: IssueCategory; label: string; desc: string; icon: any; color: string }[] = [
   {
@@ -84,15 +86,25 @@ export function ReportForm() {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const { addIssue } = useIssuesStore();
+  const { user } = useAuth();
 
-  const [municipality, setMunicipality] = useState<string>(MUNICIPALITIES[0]);
+  const [municipality, setMunicipality] = useState<string>(
+    user?.role === "citizen" && user.municipality ? user.municipality : MUNICIPALITIES[0]
+  );
   const [category, setCategory] = useState<IssueCategory>("organic_kitchen");
   const [quantityEstimate, setQuantityEstimate] = useState<string>("1-2 Bags (Small)");
   const [pickupWindow, setPickupWindow] = useState<string>("Morning (8 AM - 12 PM)");
   const [address, setAddress] = useState("");
   const [landmark, setLandmark] = useState("");
-  const [contactPhone, setContactPhone] = useState("");
+  const [contactPhone, setContactPhone] = useState(user?.phone || "");
   const [remarks, setRemarks] = useState("");
+
+  useEffect(() => {
+    if (user && user.role === "citizen") {
+      if (user.phone && !contactPhone) setContactPhone(user.phone);
+      if (user.municipality && municipality === MUNICIPALITIES[0]) setMunicipality(user.municipality);
+    }
+  }, [user]);
 
   const [image, setImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -194,7 +206,10 @@ export function ReportForm() {
       municipality,
       quantityEstimate,
       pickupWindow,
-      contactPhone,
+      contactPhone: contactPhone || user?.phone || "",
+      reporterId: user?.id || (contactPhone ? `cit_${contactPhone.replace(/[^0-9]/g, "")}` : "local_citizen"),
+      reporterName: user?.name || "Citizen",
+      reporterPhone: contactPhone || user?.phone || "",
       department:
         category === "organic_kitchen"
           ? "Wet & Organic Composting"
@@ -266,10 +281,10 @@ export function ReportForm() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Button
             variant="primary"
-            className="w-full sm:w-auto px-6 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm"
-            onClick={() => router.push(`/issues/${createdId}`)}
+            className="w-full sm:w-auto px-6 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm flex items-center justify-center gap-2"
+            onClick={() => router.push("/my-reports")}
           >
-            Track Collection Live <ArrowRight className="h-4 w-4 ml-1" />
+            <ClipboardList className="h-4 w-4" /> View in My Reports <ArrowRight className="h-4 w-4 ml-1" />
           </Button>
           <Button
             variant="outline"

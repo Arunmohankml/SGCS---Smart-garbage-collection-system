@@ -3,15 +3,17 @@
 import { useEffect, useState } from "react";
 
 export interface DemoUser {
+  id: string;
   name: string;
-  email: string;
+  phone?: string;
+  email?: string;
   role: "citizen" | "authority";
   municipality?: string;
   loggedInAt: number;
 }
 
-const STORAGE_KEY = "civiceye_user_session";
-const AUTH_EVENT = "civiceye_auth_changed";
+const STORAGE_KEY = "sgcs_user_session";
+const AUTH_EVENT = "sgcs_auth_changed";
 
 export function getStoredUser(): DemoUser | null {
   if (typeof window === "undefined") return null;
@@ -52,11 +54,21 @@ export function useAuth() {
     };
   }, []);
 
-  const loginCitizen = (name = "Demo Citizen", email = "citizen@civiceye.gov") => {
+  const loginCitizen = (
+    name = "Arun Mohan",
+    phone = "98451 22310",
+    municipality = "Poonamallee",
+    email?: string
+  ) => {
+    const cleanPhone = phone.replace(/[^0-9]/g, "");
+    const id = `cit_${cleanPhone || Date.now()}`;
     const newUser: DemoUser = {
-      name,
-      email,
+      id,
+      name: name.trim() || "Resident Citizen",
+      phone: phone.trim() || "98451 22310",
+      email: email || `${(name || "citizen").toLowerCase().replace(/[^a-z0-9]/g, "")}@citizen.sgcs.gov`,
       role: "citizen",
+      municipality: municipality || "Poonamallee",
       loggedInAt: Date.now(),
     };
     setStoredUser(newUser);
@@ -65,6 +77,7 @@ export function useAuth() {
 
   const loginAuthority = (municipalityName: string) => {
     const newUser: DemoUser = {
+      id: `admin_${municipalityName.toLowerCase().replace(/[^a-z0-9]/g, "")}`,
       name: `Officer — ${municipalityName}`,
       email: `authority@${municipalityName.toLowerCase().replace(/[^a-z0-9]/g, "")}.gov`,
       role: "authority",

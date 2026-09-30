@@ -2,10 +2,35 @@
 
 import { useEffect, useState } from "react";
 import { type Issue, type IssueCategory, type IssueStatus, type IssueImage } from "@/lib/types";
+import { type DemoUser } from "@/lib/auth";
 
 const CUSTOM_ISSUES_KEY = "sgcs_garbage_requests_v1";
 const STORE_CHANGE_EVENT = "sgcs_garbage_store_changed";
 const DELETED_ISSUES_KEY = "sgcs_deleted_garbage_v1";
+const MY_REPORTS_KEY = "sgcs_my_report_ids_v1";
+
+export function getStoredMyReportIds(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(MY_REPORTS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveMyReportId(id: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    const existing = getStoredMyReportIds();
+    if (!existing.includes(id)) {
+      localStorage.setItem(MY_REPORTS_KEY, JSON.stringify([id, ...existing]));
+      window.dispatchEvent(new Event(STORE_CHANGE_EVENT));
+    }
+  } catch (e) {
+    console.error("Failed to save report id to my_reports", e);
+  }
+}
 
 function getStoredCustomIssues(): Issue[] {
   if (typeof window === "undefined") return [];
@@ -41,15 +66,18 @@ export function useIssuesStore() {
   const [customIssues, setCustomIssues] = useState<Issue[]>([]);
   const [apiIssues, setApiIssues] = useState<Issue[]>([]);
   const [deletedIds, setDeletedIds] = useState<string[]>([]);
+  const [myReportIds, setMyReportIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setCustomIssues(getStoredCustomIssues());
     setDeletedIds(getDeletedIssueIds());
+    setMyReportIds(getStoredMyReportIds());
 
     const handleUpdate = () => {
       setCustomIssues(getStoredCustomIssues());
       setDeletedIds(getDeletedIssueIds());
+      setMyReportIds(getStoredMyReportIds());
     };
 
     window.addEventListener(STORE_CHANGE_EVENT, handleUpdate);
@@ -81,7 +109,7 @@ export function useIssuesStore() {
     const fullIssue: Issue = {
       ...newIssue,
       id,
-      reference: `CE-WASTE-${id.slice(-4)}`,
+      reference: `SGCS-${id.slice(-4)}`,
       municipality: newIssue.municipality || "Poonamallee",
       status: newIssue.status || "open",
       createdAt: new Date().toISOString(),
@@ -93,6 +121,7 @@ export function useIssuesStore() {
 
     const updated = [fullIssue, ...customIssues];
     saveCustomIssues(updated);
+    saveMyReportId(id);
     return fullIssue;
   };
 
@@ -108,13 +137,13 @@ export function useIssuesStore() {
       return {
         ...i,
         status,
+        updatedAt: new Date().toISOString(),
         images: updatedImages,
         assignedCrew: assignedCrew || i.assignedCrew,
-        updatedAt: new Date().toISOString(),
-        ...(status === "resolved" ? { resolvedAt: new Date().toISOString() } : {})
       };
     };
 
+    // Update in custom issues
     const isCustom = customIssues.some((i) => i.id === id);
     if (isCustom) {
       const updated = customIssues.map((i) =>
@@ -122,6 +151,7 @@ export function useIssuesStore() {
       );
       saveCustomIssues(updated);
     } else {
+      // Find from apiIssues and make custom
       const apiItem = apiIssues.find((i) => i.id === id);
       if (apiItem) {
         const modifiedItem = updateIssueObject(apiItem);
@@ -168,6 +198,22 @@ export function useIssuesStore() {
     }
   };
 
+  // Helper to get only this citizen's own reports
+  const getMyReports = (citizenUser?: DemoUser | null): Issue[] => {
+    return allIssues.filter((i) => {
+      if (myReportIds.includes(i.id)) return true;
+      if (citizenUser && citizenUser.id && i.reporterId === citizenUser.id) return true;
+      if (
+        citizenUser &&
+        citizenUser.phone &&
+        (i.contactPhone === citizenUser.phone || i.reporterPhone === citizenUser.phone)
+      ) {
+        return true;
+      }
+      return false;
+    });
+  };
+
   return {
     issues: allIssues,
     addIssue,
@@ -175,6 +221,8 @@ export function useIssuesStore() {
     dispatchCrew,
     deleteIssue,
     upvoteIssue,
+    getMyReports,
+    myReportIds,
     loading,
   };
 }

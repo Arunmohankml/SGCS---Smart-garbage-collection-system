@@ -56,6 +56,9 @@ export interface Issue {
   pickupWindow?: string; // e.g. "Morning (8 AM - 12 PM)", "Afternoon (1 PM - 5 PM)", "Urgent (Within 4 Hours)"
   assignedCrew?: string; // e.g. "Sanitation Truck #04 - Green Squad"
   contactPhone?: string;
+  reporterId?: string;
+  reporterName?: string;
+  reporterPhone?: string;
   images: IssueImage[];
   aiCategoryConfidence: number;
   aiSpamScore: number;
