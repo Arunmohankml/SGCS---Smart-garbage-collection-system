@@ -15,7 +15,7 @@ export function Municipality() {
             Modern Municipal Dispatch & Fleet Management
           </h2>
           <p className="mt-4 max-w-2xl text-slate-600 font-medium awwwards-body text-base">
-            CivicEye gives government sanitation administrators a centralized, categorized dispatch console. Review incoming household pickup requests by ward, dispatch collection crews with vehicles in one click, and require completion photos before closing cases.
+            SGCS gives government sanitation administrators a centralized, categorized dispatch console. Review incoming household pickup requests by ward, dispatch collection crews with vehicles in one click, and require completion photos before closing cases.
           </p>
         </Reveal>
 

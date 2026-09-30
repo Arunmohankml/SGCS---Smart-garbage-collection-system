@@ -3,34 +3,33 @@ import { Logo } from "@/components/ui/logo";
 
 const links = {
   Services: [
-    { label: "Report an Issue", href: "/report" },
-    { label: "Browse Public Feed", href: "/issues" },
-    { label: "Municipal Authority Desk", href: "/municipality" },
+    { label: "Request Waste Pickup", href: "/report" },
+    { label: "Live Pickup Tracker", href: "/issues" },
+    { label: "Ward Admin Desk", href: "/municipality" },
   ],
-  Governance: [
-    { label: "How It Works", href: "/#workflow" },
+  Operations: [
+    { label: "How It Works", href: "/#how-it-works" },
     { label: "Frequently Asked Questions", href: "/#faq" },
-    { label: "City Partner Console", href: "/municipality/dashboard" },
+    { label: "Admin Dispatch Console", href: "/municipality/dashboard" },
   ],
 };
-
 
 export function Footer() {
   return (
     <footer className="border-t border-slate-200 bg-white">
-      <div className="mx-auto max-w-6xl px-4 py-12">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block">
               <Logo />
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-600 font-medium">
-              CivicEye bridges citizens and municipal governance. Transparent, accessible, and community-driven civic complaint tracking.
+              SGCS — Smart Garbage Collection System. Transparent, on-demand doorstep waste pickup and municipal fleet dispatching.
             </p>
           </div>
           {Object.entries(links).map(([title, items]) => (
             <div key={title}>
-              <p className="text-xs font-extrabold uppercase tracking-wider text-slate-900">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-900">
                 {title}
               </p>
               <ul className="mt-4 space-y-2.5">
@@ -48,8 +47,8 @@ export function Footer() {
             </div>
           ))}
         </div>
-        <div className="mt-10 border-t border-slate-100 pt-6 text-center text-xs font-semibold text-slate-500">
-          &copy; {new Date().getFullYear()} CivicEye Public Governance Portal. Built for all citizens.
+        <div className="mt-10 border-t border-slate-100 pt-6 text-center text-xs font-semibold text-slate-400">
+          &copy; {new Date().getFullYear()} SGCS — Smart Garbage Collection System.
         </div>
       </div>
     </footer>

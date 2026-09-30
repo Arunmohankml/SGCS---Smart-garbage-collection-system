@@ -34,7 +34,7 @@ export function Hero() {
 
         {/* Clean, Readable, Minimal Description - Larger Font Size and spacing */}
         <p className="mt-10 text-slate-650 font-medium text-base sm:text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed">
-          CivicEye connects citizens directly with city sanitation departments. Request doorstep or neighborhood garbage collection from your home, and municipal admins dispatch collection vehicles in real-time.
+          SGCS connects citizens directly with municipal sanitation departments. Request doorstep or neighborhood garbage collection from your home, and municipal admins dispatch collection vehicles in real-time.
         </p>
 
         {/* Primary Action Buttons - Larger spacing */}

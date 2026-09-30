@@ -40,7 +40,7 @@ export function HowItWorks() {
             Simple 4-Step Process
           </div>
           <h2 className="awwwards-h2 text-slate-900 font-bold text-3xl sm:text-4xl">
-            How CivicEye Waste Collection Works
+            How SGCS Waste Collection Works
           </h2>
           <p className="mt-2 text-base font-medium text-slate-600 max-w-xl">
             A seamless on-demand waste collection cycle connecting households with city sanitation fleets.
