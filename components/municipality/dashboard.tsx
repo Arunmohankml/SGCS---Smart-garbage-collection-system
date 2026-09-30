@@ -351,7 +351,7 @@ export function MunicipalityDashboard() {
                           #{issue.reference}
                         </span>
                         <span className="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-[10px] font-bold text-blue-900">
-                          {issue.municipality || "Central Ward"}
+                          {issue.municipality || "Poonamallee"}
                         </span>
                         <span className="rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-[10px] font-bold text-slate-700">
                           {CATEGORY_LABELS[issue.category] || "Waste"}

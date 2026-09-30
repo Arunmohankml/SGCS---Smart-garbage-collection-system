@@ -67,7 +67,7 @@ export function IssueDetail() {
               #{issue.reference}
             </span>
             <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-0.5 text-xs font-bold text-blue-900">
-              {issue.municipality || "Central Ward"}
+              {issue.municipality || "Poonamallee"}
             </span>
             <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-0.5 text-xs font-bold text-slate-700">
               {CATEGORY_LABELS[issue.category] || "Waste"}
@@ -172,7 +172,7 @@ export function IssueDetail() {
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
             <span className="text-slate-400 block text-xs">Municipality Jurisdiction</span>
             <span className="text-base font-bold text-slate-900 mt-1 block">
-              {issue.municipality || "Central Ward"}
+              {issue.municipality || "Poonamallee"}
             </span>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">

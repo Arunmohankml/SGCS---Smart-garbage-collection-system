@@ -5,14 +5,9 @@ import { useRouter } from "next/navigation";
 import { Building2, LogOut, ShieldCheck, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
+import { MUNICIPALITIES } from "@/lib/types";
 
-const municipalityOptions = [
-  "Municipality 1 — Central Ward",
-  "Municipality 2 — North Zone",
-  "Municipality 3 — East District",
-  "Municipality 4 — South Metro",
-  "Municipality 5 — West Suburbs",
-];
+const municipalityOptions = MUNICIPALITIES.map((m) => `${m} Municipality`);
 
 export function MunicipalityLogin() {
   const router = useRouter();

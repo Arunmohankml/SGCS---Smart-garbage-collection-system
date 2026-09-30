@@ -52,7 +52,7 @@ export function IssueCard({ issue, onSelect, onVote }: IssueCardProps) {
 
           <div className="absolute top-3 right-3 z-10">
             <span className="rounded-full bg-black/60 backdrop-blur-md px-2.5 py-1 text-[10px] font-bold text-white uppercase tracking-wider">
-              {issue.municipality || "Central Ward"}
+              {issue.municipality || "Poonamallee"}
             </span>
           </div>
           
@@ -79,7 +79,7 @@ export function IssueCard({ issue, onSelect, onVote }: IssueCardProps) {
           </div>
           <div className="absolute top-3 right-3">
             <span className="rounded-full bg-slate-200/80 px-2.5 py-1 text-[10px] font-bold text-slate-700 uppercase tracking-wider">
-              {issue.municipality || "Central Ward"}
+              {issue.municipality || "Poonamallee"}
             </span>
           </div>
         </div>

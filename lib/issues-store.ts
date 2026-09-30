@@ -82,7 +82,7 @@ export function useIssuesStore() {
       ...newIssue,
       id,
       reference: `CE-WASTE-${id.slice(-4)}`,
-      municipality: newIssue.municipality || "Central Ward",
+      municipality: newIssue.municipality || "Poonamallee",
       status: newIssue.status || "open",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

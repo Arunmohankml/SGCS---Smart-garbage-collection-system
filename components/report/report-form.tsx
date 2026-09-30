@@ -85,7 +85,7 @@ export function ReportForm() {
   const fileRef = useRef<HTMLInputElement>(null);
   const { addIssue } = useIssuesStore();
 
-  const [municipality, setMunicipality] = useState<string>("Central Ward");
+  const [municipality, setMunicipality] = useState<string>(MUNICIPALITIES[0]);
   const [category, setCategory] = useState<IssueCategory>("organic_kitchen");
   const [quantityEstimate, setQuantityEstimate] = useState<string>("1-2 Bags (Small)");
   const [pickupWindow, setPickupWindow] = useState<string>("Morning (8 AM - 12 PM)");

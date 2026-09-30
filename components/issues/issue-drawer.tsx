@@ -65,7 +65,7 @@ export function IssueDrawer({ issue, onClose, onVote }: IssueDrawerProps) {
               #{issue.reference}
             </span>
             <span className="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-xs font-bold text-blue-900">
-              {issue.municipality || "Central Ward"}
+              {issue.municipality || "Poonamallee"}
             </span>
             <StatusBadge status={issue.status} />
           </div>

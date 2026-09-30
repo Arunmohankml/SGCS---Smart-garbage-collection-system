@@ -51,7 +51,7 @@ export interface Issue {
   location: GeoPoint;
   address?: string;
   landmark?: string;
-  municipality: string; // e.g. "Central Ward", "North Zone", "East District", "South Metro", "West Suburbs"
+  municipality: string; // e.g. "Poonamallee", "Thiruverkadu", "Kundrathur", etc.
   quantityEstimate?: string; // e.g. "1-2 Bags (Small)", "3-5 Bags (Medium)", "Bulky / Truckload"
   pickupWindow?: string; // e.g. "Morning (8 AM - 12 PM)", "Afternoon (1 PM - 5 PM)", "Urgent (Within 4 Hours)"
   assignedCrew?: string; // e.g. "Sanitation Truck #04 - Green Squad"
@@ -132,11 +132,20 @@ export const STATUS_LABELS: Record<IssueStatus, string> = {
 };
 
 export const MUNICIPALITIES = [
-  "Central Ward",
-  "North Zone",
-  "East District",
-  "South Metro",
-  "West Suburbs",
+  "Poonamallee",
+  "Thiruverkadu",
+  "Thiruninravur",
+  "Kundrathur",
+  "Mangadu",
+  "Sriperumbudur",
+  "Walajabad",
+  "Tirukalukundram",
+  "Nandivaram-Guduvancheri",
+  "Maraimalai Nagar",
+  "Chengalpattu",
+  "Ponneri",
+  "Tiruttani",
+  "Arakkonam",
 ] as const;
 
 export type MunicipalityName = typeof MUNICIPALITIES[number];
